@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d0716">
-<title>NolMusic — Nolson</title>
+<title>NolSongs — Nolson</title>
+<!-- Favicon SVG Inline NolSongs -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='18' y1='20' x2='82' y2='80' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23c6ff3d'/%3E%3Cstop offset='100%25' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='92' height='92' rx='24' fill='%23150c24' stroke='%238b5cf6' stroke-width='3'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%238b5cf6' stroke-opacity='.5' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='24' fill='none' stroke='%238b5cf6' stroke-opacity='.65' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%238b5cf6' fill-opacity='.55'/%3E%3Cpath d='M23 79V21L68 63V48H77V79L32 37V79H23Z' fill='%23150c24' stroke='url(%23g)' stroke-width='3.5'/%3E%3Crect x='57' y='34' width='4.5' height='13' rx='1' fill='%23c6ff3d'/%3E%3Crect x='63.5' y='29' width='4.5' height='18' rx='1' fill='%23c6ff3d'/%3E%3Crect x='70' y='21' width='4.5' height='23' rx='1' fill='%23c6ff3d'/%3E%3Crect x='76.5' y='29' width='4.5' height='18' rx='1' fill='%23c6ff3d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.1/fonts/remixicon.css" rel="stylesheet">
 <style>
+  /* Variabel Tema Utama & Palet Dinamis Sampul Lagu */
   :root{--bg:#0d0716;--card:#170e26;--line:#2b1f40;--ink:#f3eeff;--muted:#9d8fbd;--lime:#c6ff3d;--violet:#8b5cf6;--pink:#ff4fa3;--lc1:#7a2617;--lc2:#2d0d08}
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -19,6 +21,8 @@
   a{color:inherit;text-decoration:none}
   i[class^="ri-"]{line-height:1;vertical-align:-.125em}
   .unb{font-family:'Unbounded',sans-serif}
+
+  /* Canvas Equalizer Latar & Splash Screen */
   #viz{position:fixed;inset:0;z-index:-1;opacity:.55;pointer-events:none}
   #splash{position:fixed;inset:0;z-index:99;background:var(--bg);display:grid;place-items:center;transition:opacity .45s,visibility .45s}
   #splash.hide{opacity:0;visibility:hidden;pointer-events:none}
@@ -27,6 +31,8 @@
   .sp-box h2{font-family:'Unbounded';font-size:1.75rem;margin:0;letter-spacing:-.02em}.sp-box span{color:var(--lime)}
   .sp-tag{color:var(--muted);font-size:.78rem;margin-top:4px;letter-spacing:.03em}
   @keyframes spIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+
+  /* Tata Letak Navigasi & Hero */
   .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
   nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0;gap:12px}
   .brand{display:inline-flex;align-items:center;gap:10px;font-family:'Unbounded',sans-serif;font-weight:900;font-size:1.18rem;letter-spacing:-.02em}
@@ -38,6 +44,8 @@
   .set-btn:hover{border-color:var(--lime);color:var(--lime)}
   .q-badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:10px;background:var(--lime);color:#111;font-size:.66rem;font-weight:800;display:none;place-items:center}
   .q-badge.show{display:grid}
+
+  /* Pemutar Utama & Kontrol */
   .hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;min-height:84vh}
   .hero h1{font-family:'Unbounded';font-weight:900;font-size:clamp(2.4rem,8vw,7rem);line-height:.95;letter-spacing:-.03em;word-break:break-word}
   .hero h1 span{color:var(--lime);display:inline-block}
@@ -65,6 +73,8 @@
   .p-seek input[type="range"],.fs-seek input[type="range"]{flex:1;-webkit-appearance:none;appearance:none;height:5px;background:rgba(255,255,255,.22);border-radius:5px;outline:none;cursor:pointer}
   .p-seek input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--lime);cursor:pointer;box-shadow:0 0 8px rgba(0,0,0,.45)}
   .fs-seek input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;cursor:pointer}
+
+  /* Kartu Lirik Sinkron & Mode Layar Penuh */
   .sp-lyr{margin-top:16px;background:linear-gradient(165deg,var(--lc1),var(--lc2));border-radius:26px;padding:18px 20px 20px;width:min(460px,100%);box-shadow:0 18px 44px rgba(0,0,0,.45);transition:background .6s}
   .sp-lyr-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
   .sp-lyr-hd b{font-size:1.05rem;font-weight:700;color:#fff;letter-spacing:-.01em}
@@ -90,6 +100,8 @@
   .fs-bot{max-width:640px;width:100%;margin:10px auto 0;display:flex;flex-direction:column;gap:12px}
   .fs-seek{display:flex;align-items:center;gap:10px;font-size:.75rem;color:rgba(255,255,255,.8);font-variant-numeric:tabular-nums}
   .fs-play{width:56px;height:56px;margin:0 auto;border-radius:50%;border:0;background:#fff;color:#111;font-size:1.6rem;cursor:pointer;display:grid;place-items:center}
+
+  /* Piringan Hitam Turntable */
   .deck{position:relative;width:min(460px,86vw);aspect-ratio:1;justify-self:center;overflow:hidden}
   .vinyl{position:absolute;inset:6%;border-radius:50%;background:repeating-radial-gradient(circle,#111 0 2px,#1d1d1d 3px 5px);box-shadow:0 30px 80px rgba(0,0,0,.45),inset 0 0 0 2px #2a2a2a;animation:spin 2.4s linear infinite paused}
   body.playing .vinyl{animation-play-state:running}
@@ -102,6 +114,8 @@
   .arm::before{content:"";position:absolute;right:-8px;top:-9px;width:24px;height:24px;border-radius:50%;background:#bbb}
   .arm::after{content:"";position:absolute;left:-6px;top:-6px;width:20px;height:18px;background:#ddd;border-radius:3px}
   body.playing .arm{transform:rotate(-2deg)}
+
+  /* Daftar Lagu, Filter & Pencarian */
   section{padding:80px 0}
   h2{font-family:'Unbounded';font-size:clamp(1.9rem,4vw,3rem);margin-bottom:20px}
   h2 em{font-style:normal;color:var(--lime)}
@@ -133,6 +147,8 @@
   .fav.on{border-color:var(--pink);color:var(--pink);background:rgba(255,79,163,.12)}
   body.bundled .pick{display:none}
   .empty{display:none;text-align:center;color:var(--muted);padding:28px;font-size:.9rem}
+
+  /* Toast & Mini Player Melayang */
   #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:var(--card);border:1px solid var(--lime);color:var(--ink);padding:9px 18px;border-radius:20px;font-size:.82rem;opacity:0;pointer-events:none;transition:.25s;z-index:95;white-space:nowrap}
   #toast.show{opacity:1;transform:translate(-50%,0)}
   .mini{position:fixed;left:16px;right:16px;top:calc(100vh - 82px);top:calc(100svh - 82px);bottom:auto!important;max-width:540px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:10px 14px 12px;display:flex;align-items:center;gap:12px;z-index:20;box-shadow:0 8px 20px rgba(0,0,0,.45);opacity:0;visibility:hidden;pointer-events:none;overflow:hidden;transition:opacity .2s ease!important;animation:none!important}
@@ -143,6 +159,8 @@
   .m-info{flex:1;min-width:0;cursor:pointer}.m-info b{display:block;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.m-info small{display:block;font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .m-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:1.15rem;cursor:pointer;display:grid;place-items:center;flex-shrink:0}.m-btn.main{background:var(--lime);color:#111;border:0}
   .mini *{animation:none!important;transform:none!important}
+
+  /* Modal Pengaturan, Antrean & Kartu Lirik */
   .set-modal{position:fixed;inset:0;z-index:80;background:#07040d;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease}
   .set-modal.open{opacity:1;visibility:visible;pointer-events:auto}
   .set-sheet{position:fixed;top:24px;bottom:24px;left:16px;right:16px;max-width:540px;margin:0 auto;background:var(--bg);border:1px solid var(--line);border-radius:26px;display:flex;flex-direction:column;overflow:hidden}
@@ -193,20 +211,23 @@
 </style>
 </head>
 <body>
-  <div id="splash"><div class="sp-box"><div class="sp-logo"><svg viewBox="0 0 100 100" width="96" height="96" fill="none"><defs><linearGradient id="nmG1" x1="18" y1="20" x2="82" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="55%" stop-color="#9be15d"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient><linearGradient id="nmE1" x1="0" y1="18" x2="0" y2="52" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs><rect x="4" y="4" width="92" height="92" rx="24" fill="#150c24" stroke="#8b5cf6" stroke-width="2.5"/><circle cx="50" cy="50" r="35" stroke="#8b5cf6" stroke-opacity=".45" stroke-width="1.6"/><circle cx="50" cy="50" r="29" stroke="#8b5cf6" stroke-opacity=".55" stroke-width="1.6"/><circle cx="50" cy="50" r="23" stroke="#8b5cf6" stroke-opacity=".65" stroke-width="1.6"/><circle cx="50" cy="50" r="14" fill="#8b5cf6" fill-opacity=".55"/><path d="M23 79V21L68 63V48H77V79L32 37V79H23Z" fill="#150c24" stroke="url(#nmG1)" stroke-width="3.2"/><path d="M27.5 72V31L63 64" stroke="url(#nmG1)" stroke-width="2"/><g fill="url(#nmE1)"><rect x="57" y="34" width="4.5" height="3.2" rx=".7"/><rect x="57" y="39" width="4.5" height="3.2" rx=".7"/><rect x="57" y="44" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="44" width="4.5" height="3.2" rx=".7"/><rect x="70" y="21" width="4.5" height="3.2" rx=".7"/><rect x="70" y="26" width="4.5" height="3.2" rx=".7"/><rect x="70" y="31" width="4.5" height="3.2" rx=".7"/><rect x="70" y="36" width="4.5" height="3.2" rx=".7"/><rect x="70" y="41" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="44" width="4.5" height="3.2" rx=".7"/></g></svg></div><h2><span>Nol</span>Music</h2><p class="sp-tag">A Nolson Music Experience</p></div></div>
+  <!-- Splash Screen Pembuka -->
+<div id="splash"><div class="sp-box"><div class="sp-logo"><svg viewBox="0 0 100 100" width="96" height="96" fill="none"><defs><linearGradient id="nmG1" x1="18" y1="20" x2="82" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="55%" stop-color="#9be15d"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient><linearGradient id="nmE1" x1="0" y1="18" x2="0" y2="52" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs><rect x="4" y="4" width="92" height="92" rx="24" fill="#150c24" stroke="#8b5cf6" stroke-width="2.5"/><circle cx="50" cy="50" r="35" stroke="#8b5cf6" stroke-opacity=".45" stroke-width="1.6"/><circle cx="50" cy="50" r="29" stroke="#8b5cf6" stroke-opacity=".55" stroke-width="1.6"/><circle cx="50" cy="50" r="23" stroke="#8b5cf6" stroke-opacity=".65" stroke-width="1.6"/><circle cx="50" cy="50" r="14" fill="#8b5cf6" fill-opacity=".55"/><path d="M23 79V21L68 63V48H77V79L32 37V79H23Z" fill="#150c24" stroke="url(#nmG1)" stroke-width="3.2"/><path d="M27.5 72V31L63 64" stroke="url(#nmG1)" stroke-width="2"/><g fill="url(#nmE1)"><rect x="57" y="34" width="4.5" height="3.2" rx=".7"/><rect x="57" y="39" width="4.5" height="3.2" rx=".7"/><rect x="57" y="44" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="44" width="4.5" height="3.2" rx=".7"/><rect x="70" y="21" width="4.5" height="3.2" rx=".7"/><rect x="70" y="26" width="4.5" height="3.2" rx=".7"/><rect x="70" y="31" width="4.5" height="3.2" rx=".7"/><rect x="70" y="36" width="4.5" height="3.2" rx=".7"/><rect x="70" y="41" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="44" width="4.5" height="3.2" rx=".7"/></g></svg></div><h2><span>Nol</span>Songs</h2><p class="sp-tag">A Nolson Music Experience</p></div></div>
 <canvas id="viz"></canvas>
 <audio id="audio" preload="auto"></audio>
+
 <div class="wrap">
-  <nav><a class="brand" href="#"><svg viewBox="0 0 100 100" width="36" height="36" fill="none"><defs><linearGradient id="nmG2" x1="18" y1="20" x2="82" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="55%" stop-color="#9be15d"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient><linearGradient id="nmE2" x1="0" y1="18" x2="0" y2="52" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs><rect x="4" y="4" width="92" height="92" rx="24" fill="#150c24" stroke="#8b5cf6" stroke-width="2.5"/><circle cx="50" cy="50" r="35" stroke="#8b5cf6" stroke-opacity=".45" stroke-width="1.6"/><circle cx="50" cy="50" r="29" stroke="#8b5cf6" stroke-opacity=".55" stroke-width="1.6"/><circle cx="50" cy="50" r="23" stroke="#8b5cf6" stroke-opacity=".65" stroke-width="1.6"/><circle cx="50" cy="50" r="14" fill="#8b5cf6" fill-opacity=".55"/><path d="M23 79V21L68 63V48H77V79L32 37V79H23Z" fill="#150c24" stroke="url(#nmG2)" stroke-width="3.2"/><path d="M27.5 72V31L63 64" stroke="url(#nmG2)" stroke-width="2"/><g fill="url(#nmE2)"><rect x="57" y="34" width="4.5" height="3.2" rx=".7"/><rect x="57" y="39" width="4.5" height="3.2" rx=".7"/><rect x="57" y="44" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="44" width="4.5" height="3.2" rx=".7"/><rect x="70" y="21" width="4.5" height="3.2" rx=".7"/><rect x="70" y="26" width="4.5" height="3.2" rx=".7"/><rect x="70" y="31" width="4.5" height="3.2" rx=".7"/><rect x="70" y="36" width="4.5" height="3.2" rx=".7"/><rect x="70" y="41" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="44" width="4.5" height="3.2" rx=".7"/></g></svg><div><span>Nol</span>Music</div></a><div class="nav-right"><ul><li><a href="#rilis">Rilis</a></li></ul><button type="button" class="set-btn" id="queueOpenBtn" aria-label="Antrean Lagu" title="Antrean Lagu"><i class="ri-play-list-2-line"></i><span class="q-badge" id="qBadge">0</span></button><button type="button" class="set-btn" id="setBtn" aria-label="Pengaturan" title="Pengaturan"><i class="ri-settings-3-line"></i></button></div></nav>
+  <nav><a class="brand" href="#"><svg viewBox="0 0 100 100" width="36" height="36" fill="none"><defs><linearGradient id="nmG2" x1="18" y1="20" x2="82" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="55%" stop-color="#9be15d"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient><linearGradient id="nmE2" x1="0" y1="18" x2="0" y2="52" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs><rect x="4" y="4" width="92" height="92" rx="24" fill="#150c24" stroke="#8b5cf6" stroke-width="2.5"/><circle cx="50" cy="50" r="35" stroke="#8b5cf6" stroke-opacity=".45" stroke-width="1.6"/><circle cx="50" cy="50" r="29" stroke="#8b5cf6" stroke-opacity=".55" stroke-width="1.6"/><circle cx="50" cy="50" r="23" stroke="#8b5cf6" stroke-opacity=".65" stroke-width="1.6"/><circle cx="50" cy="50" r="14" fill="#8b5cf6" fill-opacity=".55"/><path d="M23 79V21L68 63V48H77V79L32 37V79H23Z" fill="#150c24" stroke="url(#nmG2)" stroke-width="3.2"/><path d="M27.5 72V31L63 64" stroke="url(#nmG2)" stroke-width="2"/><g fill="url(#nmE2)"><rect x="57" y="34" width="4.5" height="3.2" rx=".7"/><rect x="57" y="39" width="4.5" height="3.2" rx=".7"/><rect x="57" y="44" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="44" width="4.5" height="3.2" rx=".7"/><rect x="70" y="21" width="4.5" height="3.2" rx=".7"/><rect x="70" y="26" width="4.5" height="3.2" rx=".7"/><rect x="70" y="31" width="4.5" height="3.2" rx=".7"/><rect x="70" y="36" width="4.5" height="3.2" rx=".7"/><rect x="70" y="41" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="44" width="4.5" height="3.2" rx=".7"/></g></svg><div><span>Nol</span>Songs</div></a><div class="nav-right"><ul><li><a href="#rilis">Rilis</a></li></ul><button type="button" class="set-btn" id="queueOpenBtn" aria-label="Antrean Lagu" title="Antrean Lagu"><i class="ri-play-list-2-line"></i><span class="q-badge" id="qBadge">0</span></button><button type="button" class="set-btn" id="setBtn" aria-label="Pengaturan" title="Pengaturan"><i class="ri-settings-3-line"></i></button></div></nav>
+
   <header class="hero">
     <div class="rv in">
       <p class="unb" style="color:var(--muted);font-size:.85rem;letter-spacing:.2em">Nolson</p>
-      <h1><span>Nol</span>Music</h1>
-      <p class="lead">NolMusic memadukan alunan musik dan melodi yang membuat harimu tak pernah sepi. Tekan play untuk merasakannya.</p>
+      <h1><span>Nol</span>Songs</h1>
+      <p class="lead">NolSongs memadukan alunan musik dan melodi yang membuat harimu tak pernah sepi. Tekan play untuk merasakannya.</p>
       <div class="live-line" id="liveLine"></div>
       <div class="player" id="mainPlayer">
         <div class="p-top">
-          <img class="p-art" id="pArt" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt="">
+          <img class="p-art" id="pArt" crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt="">
           <div class="p-info"><b id="nowTitle">Dunia Yang Nanti</b><small id="nowSub">Raim Laode · Klik play untuk memutar</small></div>
           <div class="eq"><i></i><i></i><i></i><i></i></div>
           <button class="play" id="play" aria-label="Putar lagu"><i class="ri-play-fill"></i></button>
@@ -230,6 +251,8 @@
     <div class="deck rv in"><div class="vinyl"><div class="label"></div></div><div class="arm"></div></div>
   </header>
 </div>
+
+<!-- Bagian Daftar 60 Lagu -->
 <section id="rilis"><div class="wrap">
   <h2 class="rv">Daftar <em>Lagu</em></h2>
   <div class="bar rv">
@@ -242,81 +265,87 @@
   </div>
   <div class="chips rv" id="artistChips"></div>
   <div class="tracks" id="tracks">
-    <div class="track on" data-bpm="82" data-t="Dunia Yang Nanti" data-src="Dunia-Yang-Nanti.mp3"><span class="n">01</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Dunia Yang Nanti</b><small class="sub">Raim Laode · Album Iqro'</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="92" data-t="Bersenja Gurau" data-src="Bersenja-Gurau.mp3"><span class="n">02</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Bersenja Gurau</b><small class="sub">Raim Laode · Single</small></div><span class="tag">92 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="88" data-t="Lesung Pipi" data-src="Lesung-Pipi.mp3"><span class="n">03</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Lesung Pipi</b><small class="sub">Raim Laode · Single</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="96" data-t="Menari-Nari" data-src="Menari-Nari.mp3"><span class="n">04</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Menari-Nari</b><small class="sub">Raim Laode · Album Iqro'</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="78" data-t="Komang" data-src="Komang.mp3"><span class="n">05</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Komang</b><small class="sub">Raim Laode · Single</small></div><span class="tag">78 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="86" data-t="Iqro'" data-src="Iqro.mp3"><span class="n">06</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Iqro'</b><small class="sub">Raim Laode · Album Iqro'</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="76" data-t="Suasana Rumah" data-src="Suasana-Rumah.mp3"><span class="n">07</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Suasana Rumah</b><small class="sub">Raim Laode · Single</small></div><span class="tag">76 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="84" data-t="Sang Badut" data-src="Sang-Badut.mp3"><span class="n">08</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sang Badut</b><small class="sub">Raim Laode · Single</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="80" data-t="Babak Terakhir" data-src="Babak-Terakhir.mp3"><span class="n">09</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Babak Terakhir</b><small class="sub">Raim Laode · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="85" data-t="Ekspektasi (feat. Aruma)" data-q="Ekspektasi Raim Laode Aruma" data-src="Ekspektasi.mp3"><span class="n">10</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Ekspektasi (feat. Aruma)</b><small class="sub">Raim Laode · Single</small></div><span class="tag">85 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="75" data-t="Perih" data-src="Perih.mp3"><span class="n">11</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Perih</b><small class="sub">Vierra · Single</small></div><span class="tag">75 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="86" data-t="Dera" data-src="Dera.mp3"><span class="n">12</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Dera</b><small class="sub">Virtual Feelings · Single</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="82" data-t="Esa x Perih" data-q="Perih Esa" data-src="Esa-x-Perih.mp3"><span class="n">13</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Esa x Perih</b><small class="sub">Esa x Perih · Remix</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="94" data-t="Terjebak Imajinasi" data-src="Terjebak-Imajinasi.mp3"><span class="n">14</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Terjebak Imajinasi</b><small class="sub">Stereo Wall · Single</small></div><span class="tag">94 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="80" data-t="Tak Lagi Sama" data-src="Tak-Lagi-Sama.mp3"><span class="n">15</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Tak Lagi Sama</b><small class="sub">Virtual Feelings · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="90" data-t="Jakarta Hari Ini" data-src="Jakarta-Hari-Ini.mp3"><span class="n">16</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Jakarta Hari Ini</b><small class="sub">for Revenge · Single</small></div><span class="tag">90 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="88" data-t="Sadrah" data-src="Sadrah.mp3"><span class="n">17</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sadrah</b><small class="sub">for Revenge · Single</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="85" data-t="Serena" data-src="Serena.mp3"><span class="n">18</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Serena</b><small class="sub">for Revenge · Single</small></div><span class="tag">85 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="95" data-t="Penyangkalan" data-src="Penyangkalan.mp3"><span class="n">19</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Penyangkalan</b><small class="sub">for Revenge · Single</small></div><span class="tag">95 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="88" data-t="Tangguh" data-src="Tangguh.mp3"><span class="n">20</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Tangguh</b><small class="sub">Petra Sihombing · Single</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="92" data-t="80 km/h" data-q="80 km/h Petra Sihombing" data-src="80-km-h.mp3"><span class="n">21</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>80 km/h</b><small class="sub">Petra Sihombing · Single</small></div><span class="tag">92 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="84" data-t="Sendiri" data-src="Sendiri.mp3"><span class="n">22</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sendiri</b><small class="sub">for Revenge · Single</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="86" data-t="Tak Mengalah" data-src="Tak-Mengalah.mp3"><span class="n">23</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Tak Mengalah</b><small class="sub">for Revenge · Single</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="80" data-t="Amnesia" data-q="Amnesia Ghazali" data-src="Amnesia.mp3"><span class="n">24</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Amnesia</b><small class="sub">Ghazali · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="78" data-t="Pergilah Kekasih" data-src="Pergilah-Kekasih.mp3"><span class="n">25</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Pergilah Kekasih</b><small class="sub">Raim Laode · Single</small></div><span class="tag">78 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="90" data-t="Jadi Yang Kuinginkan" data-src="Jadi-Yang-Kuinginkan.mp3"><span class="n">26</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Jadi Yang Kuinginkan</b><small class="sub">Vierra · My First Love</small></div><span class="tag">90 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="82" data-t="Bersamamu" data-src="Bersamamu.mp3"><span class="n">27</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Bersamamu</b><small class="sub">Vierra · My First Love</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="118" data-t="Pangeran Cinta" data-src="Pangeran-Cinta.mp3"><span class="n">28</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Pangeran Cinta</b><small class="sub">Dewa 19 · Laskar Cinta</small></div><span class="tag">118 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="94" data-t="Satu" data-src="Satu.mp3"><span class="n">29</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Satu</b><small class="sub">Dewa 19 · Laskar Cinta</small></div><span class="tag">94 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="96" data-t="Mistikus Cinta" data-src="Mistikus-Cinta.mp3"><span class="n">30</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Mistikus Cinta</b><small class="sub">Dewa 19 · Bintang Lima</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="110" data-t="Separuh Napas" data-src="Separuh-Napas.mp3"><span class="n">31</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Separuh Napas</b><small class="sub">Dewa 19 · Bintang Lima</small></div><span class="tag">110 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="114" data-t="Cinta Gila" data-src="Cinta-Gila.mp3"><span class="n">32</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Cinta Gila</b><small class="sub">Dewa 19 · Atas Nama Cinta</small></div><span class="tag">114 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="84" data-t="Aku Milikmu" data-src="Aku-Milikmu.mp3"><span class="n">33</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Aku Milikmu</b><small class="sub">Dewa 19 · Format Masa Depan</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="86" data-t="Sephia" data-src="Sephia.mp3"><span class="n">34</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sephia</b><small class="sub">Sheila On 7 · Kisah Klasik</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="98" data-t="Bila Kau Tak Disampingku" data-src="Bila-Kau-Tak-Disampingku.mp3"><span class="n">35</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Bila Kau Tak Disampingku</b><small class="sub">Sheila On 7 · Kisah Klasik</small></div><span class="tag">98 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="104" data-t="Kita" data-src="Kita.mp3"><span class="n">36</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Kita</b><small class="sub">Sheila On 7 · Sheila On 7</small></div><span class="tag">104 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="112" data-t="Pemuja Rahasia" data-src="Pemuja-Rahasia.mp3"><span class="n">37</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Pemuja Rahasia</b><small class="sub">Sheila On 7 · Pejantan Tangguh</small></div><span class="tag">112 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="106" data-t="Sebuah Kisah Klasik" data-src="Sebuah-Kisah-Klasik.mp3"><span class="n">38</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sebuah Kisah Klasik</b><small class="sub">Sheila On 7 · Kisah Klasik</small></div><span class="tag">106 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="84" data-t="Hujan" data-src="Hujan.mp3"><span class="n">39</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Hujan</b><small class="sub">Utopia · Utopia</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="80" data-t="Serpihan Hati" data-src="Serpihan-Hati.mp3"><span class="n">40</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Serpihan Hati</b><small class="sub">Utopia · Indah</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="96" data-t="Baby Doll" data-src="Baby-Doll.mp3"><span class="n">41</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Baby Doll</b><small class="sub">Utopia · Indah</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="82" data-t="Selamanya" data-src="Selamanya.mp3"><span class="n">42</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Selamanya</b><small class="sub">Utopia · Utopia</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="88" data-t="Hitamku" data-src="Hitamku.mp3"><span class="n">43</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Hitamku</b><small class="sub">Andra & The Backbone · Season 2</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="94" data-t="Main Hati" data-src="Main-Hati.mp3"><span class="n">44</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Main Hati</b><small class="sub">Andra & The Backbone · Season 2</small></div><span class="tag">94 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="76" data-t="Masa Ini, Nanti, dan Indah Lainnya" data-q="Masa Ini Nanti dan Indah Lainnya Nuca" data-src="Masa-Ini-Nanti-dan-Indah-Lainnya.mp3"><span class="n">45</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Masa Ini, Nanti, dan Indah Lainnya</b><small class="sub">Nuca · Single</small></div><span class="tag">76 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="78" data-t="Kembali Kecil" data-src="Kembali-Kecil.mp3"><span class="n">46</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Kembali Kecil</b><small class="sub">Nuca · Single</small></div><span class="tag">78 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="80" data-t="Mengenal Lebih Jauh" data-src="Mengenal-Lebih-Jauh.mp3"><span class="n">47</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Mengenal Lebih Jauh</b><small class="sub">Nuca · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="75" data-t="Sampai Kita Tua" data-src="Sampai-Kita-Tua.mp3"><span class="n">48</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sampai Kita Tua</b><small class="sub">Nuca · Single</small></div><span class="tag">75 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="86" data-t="Sang Ratu" data-src="Sang-Ratu.mp3"><span class="n">49</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sang Ratu</b><small class="sub">Nuca · Single</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="74" data-t="I'd Like to Watch You Sleeping" data-q="I'd Like to Watch You Sleeping Sal Priadi" data-src="Id-Like-to-Watch-You-Sleeping.mp3"><span class="n">50</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>I'd Like to Watch You Sleeping</b><small class="sub">Sal Priadi · Berhati</small></div><span class="tag">74 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="76" data-t="Kita Usahakan Rumah Itu" data-src="Kita-Usahakan-Rumah-Itu.mp3"><span class="n">51</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Kita Usahakan Rumah Itu</b><small class="sub">Sal Priadi · MARKERS AND SUCH PENS FLASHDISKS</small></div><span class="tag">76 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="72" data-t="Ocean Eyes" data-q="Ocean Eyes Billie Eilish" data-src="Ocean-Eyes.mp3"><span class="n">52</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Ocean Eyes</b><small class="sub">Billie Eilish · Don't Smile at Me</small></div><span class="tag">72 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="74" data-t="WILDFLOWER" data-q="WILDFLOWER Billie Eilish" data-src="WILDFLOWER.mp3"><span class="n">53</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>WILDFLOWER</b><small class="sub">Billie Eilish · HIT ME HARD AND SOFT</small></div><span class="tag">74 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="105" data-t="BIRDS OF A FEATHER" data-q="BIRDS OF A FEATHER Billie Eilish" data-src="BIRDS-OF-A-FEATHER.mp3"><span class="n">54</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>BIRDS OF A FEATHER</b><small class="sub">Billie Eilish · HIT ME HARD AND SOFT</small></div><span class="tag">105 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="118" data-t="Evakuasi" data-src="Evakuasi.mp3"><span class="n">55</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Evakuasi</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">118 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="85" data-t="Wejangan Mama" data-src="Wejangan-Mama.mp3"><span class="n">56</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Wejangan Mama</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">85 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="92" data-t="Besok Mungkin Kita Sampai" data-src="Besok-Mungkin-Kita-Sampai.mp3"><span class="n">57</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Besok Mungkin Kita Sampai</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">92 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="96" data-t="Jam Makan Siang (feat. Matter Mos)" data-q="Jam Makan Siang Hindia Matter Mos" data-src="Jam-Makan-Siang.mp3"><span class="n">58</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Jam Makan Siang (feat. Matter Mos)</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="104" data-t="Dehidrasi (feat. Petra Sihombing)" data-q="Dehidrasi Hindia Petra Sihombing" data-src="Dehidrasi.mp3"><span class="n">59</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Dehidrasi (feat. Petra Sihombing)</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">104 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
-    <div class="track" data-bpm="82" data-t="Untuk Apa / Untuk Apa?" data-q="Untuk Apa Hindia" data-src="Untuk-Apa.mp3"><span class="n">60</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Untuk Apa / Untuk Apa?</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track on" data-bpm="82" data-t="Dunia Yang Nanti" data-src="Dunia-Yang-Nanti.mp3"><span class="n">01</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Dunia Yang Nanti</b><small class="sub">Raim Laode · Album Iqro'</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="92" data-t="Bersenja Gurau" data-src="Bersenja-Gurau.mp3"><span class="n">02</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Bersenja Gurau</b><small class="sub">Raim Laode · Single</small></div><span class="tag">92 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="88" data-t="Lesung Pipi" data-src="Lesung-Pipi.mp3"><span class="n">03</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Lesung Pipi</b><small class="sub">Raim Laode · Single</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="96" data-t="Menari-Nari" data-src="Menari-Nari.mp3"><span class="n">04</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Menari-Nari</b><small class="sub">Raim Laode · Album Iqro'</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="78" data-t="Komang" data-src="Komang.mp3"><span class="n">05</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Komang</b><small class="sub">Raim Laode · Single</small></div><span class="tag">78 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="86" data-t="Iqro'" data-src="Iqro.mp3"><span class="n">06</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Iqro'</b><small class="sub">Raim Laode · Album Iqro'</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="76" data-t="Suasana Rumah" data-src="Suasana-Rumah.mp3"><span class="n">07</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Suasana Rumah</b><small class="sub">Raim Laode · Single</small></div><span class="tag">76 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="84" data-t="Sang Badut" data-src="Sang-Badut.mp3"><span class="n">08</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sang Badut</b><small class="sub">Raim Laode · Single</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="80" data-t="Babak Terakhir" data-src="Babak-Terakhir.mp3"><span class="n">09</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Babak Terakhir</b><small class="sub">Raim Laode · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="85" data-t="Ekspektasi (feat. Aruma)" data-q="Ekspektasi Raim Laode Aruma" data-src="Ekspektasi.mp3"><span class="n">10</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Ekspektasi (feat. Aruma)</b><small class="sub">Raim Laode · Single</small></div><span class="tag">85 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="75" data-t="Perih" data-src="Perih.mp3"><span class="n">11</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Perih</b><small class="sub">Vierra · Single</small></div><span class="tag">75 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="86" data-t="Dera" data-src="Dera.mp3"><span class="n">12</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Dera</b><small class="sub">Virtual Feelings · Single</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="82" data-t="Esa x Perih" data-q="Perih Esa" data-src="Esa-x-Perih.mp3"><span class="n">13</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Esa x Perih</b><small class="sub">Esa x Perih · Remix</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="94" data-t="Terjebak Imajinasi" data-src="Terjebak-Imajinasi.mp3"><span class="n">14</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Terjebak Imajinasi</b><small class="sub">Stereo Wall · Single</small></div><span class="tag">94 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="80" data-t="Tak Lagi Sama" data-src="Tak-Lagi-Sama.mp3"><span class="n">15</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Tak Lagi Sama</b><small class="sub">Virtual Feelings · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="90" data-t="Jakarta Hari Ini" data-src="Jakarta-Hari-Ini.mp3"><span class="n">16</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Jakarta Hari Ini</b><small class="sub">for Revenge · Single</small></div><span class="tag">90 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="88" data-t="Sadrah" data-src="Sadrah.mp3"><span class="n">17</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sadrah</b><small class="sub">for Revenge · Single</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="85" data-t="Serena" data-src="Serena.mp3"><span class="n">18</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Serena</b><small class="sub">for Revenge · Single</small></div><span class="tag">85 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="95" data-t="Penyangkalan" data-src="Penyangkalan.mp3"><span class="n">19</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Penyangkalan</b><small class="sub">for Revenge · Single</small></div><span class="tag">95 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="88" data-t="Tangguh" data-src="Tangguh.mp3"><span class="n">20</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Tangguh</b><small class="sub">Petra Sihombing · Single</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="92" data-t="80 km/h" data-q="80 km/h Petra Sihombing" data-src="80-km-h.mp3"><span class="n">21</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>80 km/h</b><small class="sub">Petra Sihombing · Single</small></div><span class="tag">92 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="84" data-t="Sendiri" data-src="Sendiri.mp3"><span class="n">22</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sendiri</b><small class="sub">for Revenge · Single</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="86" data-t="Tak Mengalah" data-src="Tak-Mengalah.mp3"><span class="n">23</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Tak Mengalah</b><small class="sub">for Revenge · Single</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="80" data-t="Amnesia" data-q="Amnesia Ghazali" data-src="Amnesia.mp3"><span class="n">24</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Amnesia</b><small class="sub">Ghazali · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="78" data-t="Pergilah Kekasih" data-src="Pergilah-Kekasih.mp3"><span class="n">25</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Pergilah Kekasih</b><small class="sub">Raim Laode · Single</small></div><span class="tag">78 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="90" data-t="Jadi Yang Kuinginkan" data-src="Jadi-Yang-Kuinginkan.mp3"><span class="n">26</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Jadi Yang Kuinginkan</b><small class="sub">Vierra · My First Love</small></div><span class="tag">90 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="82" data-t="Bersamamu" data-src="Bersamamu.mp3"><span class="n">27</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Bersamamu</b><small class="sub">Vierra · My First Love</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="118" data-t="Pangeran Cinta" data-src="Pangeran-Cinta.mp3"><span class="n">28</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Pangeran Cinta</b><small class="sub">Dewa 19 · Laskar Cinta</small></div><span class="tag">118 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="94" data-t="Satu" data-src="Satu.mp3"><span class="n">29</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Satu</b><small class="sub">Dewa 19 · Laskar Cinta</small></div><span class="tag">94 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="96" data-t="Mistikus Cinta" data-src="Mistikus-Cinta.mp3"><span class="n">30</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Mistikus Cinta</b><small class="sub">Dewa 19 · Bintang Lima</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="110" data-t="Separuh Napas" data-src="Separuh-Napas.mp3"><span class="n">31</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Separuh Napas</b><small class="sub">Dewa 19 · Bintang Lima</small></div><span class="tag">110 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="114" data-t="Cinta Gila" data-src="Cinta-Gila.mp3"><span class="n">32</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Cinta Gila</b><small class="sub">Dewa 19 · Atas Nama Cinta</small></div><span class="tag">114 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="84" data-t="Aku Milikmu" data-src="Aku-Milikmu.mp3"><span class="n">33</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Aku Milikmu</b><small class="sub">Dewa 19 · Format Masa Depan</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="86" data-t="Sephia" data-src="Sephia.mp3"><span class="n">34</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sephia</b><small class="sub">Sheila On 7 · Kisah Klasik</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="98" data-t="Bila Kau Tak Disampingku" data-src="Bila-Kau-Tak-Disampingku.mp3"><span class="n">35</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Bila Kau Tak Disampingku</b><small class="sub">Sheila On 7 · Kisah Klasik</small></div><span class="tag">98 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="104" data-t="Kita" data-src="Kita.mp3"><span class="n">36</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Kita</b><small class="sub">Sheila On 7 · Sheila On 7</small></div><span class="tag">104 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="112" data-t="Pemuja Rahasia" data-src="Pemuja-Rahasia.mp3"><span class="n">37</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Pemuja Rahasia</b><small class="sub">Sheila On 7 · Pejantan Tangguh</small></div><span class="tag">112 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="106" data-t="Sebuah Kisah Klasik" data-src="Sebuah-Kisah-Klasik.mp3"><span class="n">38</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sebuah Kisah Klasik</b><small class="sub">Sheila On 7 · Kisah Klasik</small></div><span class="tag">106 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="84" data-t="Hujan" data-src="Hujan.mp3"><span class="n">39</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Hujan</b><small class="sub">Utopia · Utopia</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="80" data-t="Serpihan Hati" data-src="Serpihan-Hati.mp3"><span class="n">40</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Serpihan Hati</b><small class="sub">Utopia · Indah</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="96" data-t="Baby Doll" data-src="Baby-Doll.mp3"><span class="n">41</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Baby Doll</b><small class="sub">Utopia · Indah</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="82" data-t="Selamanya" data-src="Selamanya.mp3"><span class="n">42</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Selamanya</b><small class="sub">Utopia · Utopia</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="88" data-t="Hitamku" data-src="Hitamku.mp3"><span class="n">43</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Hitamku</b><small class="sub">Andra & The Backbone · Season 2</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="94" data-t="Main Hati" data-src="Main-Hati.mp3"><span class="n">44</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Main Hati</b><small class="sub">Andra & The Backbone · Season 2</small></div><span class="tag">94 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="76" data-t="Masa Ini, Nanti, dan Indah Lainnya" data-q="Masa Ini Nanti dan Indah Lainnya Nuca" data-src="Masa-Ini-Nanti-dan-Indah-Lainnya.mp3"><span class="n">45</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Masa Ini, Nanti, dan Indah Lainnya</b><small class="sub">Nuca · Single</small></div><span class="tag">76 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="78" data-t="Kembali Kecil" data-src="Kembali-Kecil.mp3"><span class="n">46</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Kembali Kecil</b><small class="sub">Nuca · Single</small></div><span class="tag">78 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="80" data-t="Mengenal Lebih Jauh" data-src="Mengenal-Lebih-Jauh.mp3"><span class="n">47</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Mengenal Lebih Jauh</b><small class="sub">Nuca · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="75" data-t="Sampai Kita Tua" data-src="Sampai-Kita-Tua.mp3"><span class="n">48</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sampai Kita Tua</b><small class="sub">Nuca · Single</small></div><span class="tag">75 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="86" data-t="Sang Ratu" data-src="Sang-Ratu.mp3"><span class="n">49</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sang Ratu</b><small class="sub">Nuca · Single</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="74" data-t="I'd Like to Watch You Sleeping" data-q="I'd Like to Watch You Sleeping Sal Priadi" data-src="Id-Like-to-Watch-You-Sleeping.mp3"><span class="n">50</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>I'd Like to Watch You Sleeping</b><small class="sub">Sal Priadi · Berhati</small></div><span class="tag">74 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="76" data-t="Kita Usahakan Rumah Itu" data-src="Kita-Usahakan-Rumah-Itu.mp3"><span class="n">51</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Kita Usahakan Rumah Itu</b><small class="sub">Sal Priadi · MARKERS AND SUCH PENS FLASHDISKS</small></div><span class="tag">76 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="72" data-t="Ocean Eyes" data-q="Ocean Eyes Billie Eilish" data-src="Ocean-Eyes.mp3"><span class="n">52</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Ocean Eyes</b><small class="sub">Billie Eilish · Don't Smile at Me</small></div><span class="tag">72 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="74" data-t="WILDFLOWER" data-q="WILDFLOWER Billie Eilish" data-src="WILDFLOWER.mp3"><span class="n">53</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>WILDFLOWER</b><small class="sub">Billie Eilish · HIT ME HARD AND SOFT</small></div><span class="tag">74 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="105" data-t="BIRDS OF A FEATHER" data-q="BIRDS OF A FEATHER Billie Eilish" data-src="BIRDS-OF-A-FEATHER.mp3"><span class="n">54</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>BIRDS OF A FEATHER</b><small class="sub">Billie Eilish · HIT ME HARD AND SOFT</small></div><span class="tag">105 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="118" data-t="Evakuasi" data-src="Evakuasi.mp3"><span class="n">55</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Evakuasi</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">118 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="85" data-t="Wejangan Mama" data-src="Wejangan-Mama.mp3"><span class="n">56</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Wejangan Mama</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">85 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="92" data-t="Besok Mungkin Kita Sampai" data-src="Besok-Mungkin-Kita-Sampai.mp3"><span class="n">57</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Besok Mungkin Kita Sampai</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">92 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="96" data-t="Jam Makan Siang (feat. Matter Mos)" data-q="Jam Makan Siang Hindia Matter Mos" data-src="Jam-Makan-Siang.mp3"><span class="n">58</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Jam Makan Siang (feat. Matter Mos)</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="104" data-t="Dehidrasi (feat. Petra Sihombing)" data-q="Dehidrasi Hindia Petra Sihombing" data-src="Dehidrasi.mp3"><span class="n">59</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Dehidrasi (feat. Petra Sihombing)</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">104 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="82" data-t="Untuk Apa / Untuk Apa?" data-q="Untuk Apa Hindia" data-src="Untuk-Apa.mp3"><span class="n">60</span><img crossorigin="anonymous" src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Untuk Apa / Untuk Apa?</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
     <div class="empty" id="noResult">Belum ada lagu di daftar ini.</div>
   </div>
-</div></section>
+  </div></section>
+
+<!-- Modal Lirik Layar Penuh -->
 <div class="fs-lyr" id="fsLyr">
   <div class="fs-top"><div style="width:34px"></div><div class="fs-meta"><b id="fsTitle">Dunia Yang Nanti</b><small id="fsSub">Raim Laode</small></div><button type="button" class="sp-cbtn" id="fsClose" title="Perkecil"><i class="ri-collapse-diagonal-line"></i></button></div>
   <div class="fs-body" id="fsBody"></div>
   <div class="fs-bot"><div class="fs-seek"><span id="fsCur">0:00</span><input type="range" id="fsSeek" min="0" max="100" value="0" step="0.1"><span id="fsDur">0:00</span></div><button type="button" class="fs-play" id="fsPlay"><i class="ri-play-fill"></i></button></div>
 </div>
+
+<!-- Mini Player Bawah -->
 <div class="mini" id="mini">
-  <img id="mImg" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt="">
+  <img id="mImg" crossorigin="anonymous" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt="">
   <div class="m-info" id="mJump"><b id="mTitle">Dunia Yang Nanti</b><small id="mSub">Raim Laode</small></div>
   <button type="button" class="m-btn main" id="mPlay" aria-label="Putar atau jeda"><i class="ri-play-fill"></i></button>
   <button type="button" class="m-btn" id="mNext" aria-label="Lagu berikutnya"><i class="ri-skip-forward-fill"></i></button>
   <div class="m-prog"><i id="mProg"></i></div>
 </div>
+
+<!-- Modal Antrean Lagu -->
 <div class="set-modal" id="qModal">
   <div class="set-sheet">
     <div class="set-hd"><h3><i class="ri-play-list-2-fill"></i> Antrean Lagu</h3><button type="button" class="sp-cbtn" id="qClose" title="Tutup"><i class="ri-close-line"></i></button></div>
@@ -328,7 +357,9 @@
     </div>
   </div>
 </div>
-  <div class="set-modal" id="cardModal">
+
+  <!-- Modal Kartu Lirik -->
+<div class="set-modal" id="cardModal">
   <div class="set-sheet">
     <div class="set-hd"><h3><i class="ri-image-2-fill"></i> Kartu Lirik</h3><button type="button" class="sp-cbtn" id="cardClose" title="Tutup"><i class="ri-close-line"></i></button></div>
     <div class="set-body">
@@ -345,6 +376,8 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Pengaturan & Statistik -->
 <div class="set-modal" id="setModal">
   <div class="set-sheet">
     <div class="set-hd"><h3><i class="ri-settings-3-fill"></i> Pengaturan</h3><button type="button" class="sp-cbtn" id="setClose" title="Tutup"><i class="ri-close-line"></i></button></div>
@@ -357,6 +390,7 @@
           <div class="stat-box"><b id="stPlays">0x</b><span>Total Diputar</span></div>
         </div>
         <div class="wk-bars" id="stWeek"></div>
+      </div>
       </div>
       <div class="set-card">
         <div class="set-lbl"><i class="ri-palette-line"></i> Ubah Tema Aplikasi</div>
@@ -372,6 +406,7 @@
       </div>
       <div class="set-card">
         <div class="set-lbl"><i class="ri-sliders-line"></i> Preferensi & Data</div>
+        <div class="opt-row"><div class="opt-txt"><b>Mode Anti-Mati Latar Belakang</b><small>Jaga fokus audio & lanjutkan lagu otomatis saat keluar aplikasi</small></div><button type="button" class="tgl on" id="optBgPlay" aria-label="Toggle Mode Anti-Mati Latar Belakang"></button></div>
         <div class="opt-row"><div class="opt-txt"><b>Animasi Equalizer Latar</b><small>Matikan untuk menghemat baterai HP</small></div><button type="button" class="tgl on" id="optViz" aria-label="Toggle Equalizer"></button></div>
         <div class="opt-row"><div class="opt-txt"><b>Putar Piringan Hitam</b><small>Animasi piringan vinyl saat lagu diputar</small></div><button type="button" class="tgl on" id="optVinyl" aria-label="Toggle Piringan"></button></div>
         <div class="opt-row"><div class="opt-txt"><b>Ingat Lagu Terakhir</b><small>Simpan posisi lagu terakhir saat ditutup</small></div><button type="button" class="tgl on" id="optResume" aria-label="Toggle Ingat Lagu"></button></div>
@@ -379,17 +414,22 @@
           <button type="button" class="s-act" id="btnResetLyr"><i class="ri-refresh-line"></i> Reset Cache Lirik</button>
           <button type="button" class="s-act danger" id="btnResetStats"><i class="ri-delete-bin-line"></i> Reset Statistik</button>
         </div>
-        <p style="font-size:.73rem;color:var(--muted);text-align:center;margin-top:12px">NolMusic v1.3 · 60 Lagu · Dibuat oleh Nolson</p>
+        <p style="font-size:.73rem;color:var(--muted);text-align:center;margin-top:12px">NolSongs v1.2 · 60 Lagu · Dibuat oleh Nolson</p>
       </div>
     </div>
-  </div>
 </div>
-  <div id="toast"></div>
-<footer>© 2026 NolMusic · Nolson</footer>
+<div id="toast"></div>
+<footer>© 2026 NolSongs · Nolson</footer>
+
 <script>
+// Sembunyikan splash screen setelah inisialisasi
 setTimeout(()=>document.getElementById('splash').classList.add('hide'),1100);
 if(!localStorage.getItem('nolApkClean_v2')){['nolLyrics','nolLyrics2','nolLyrics3','nolLast','nolArt','nolFavs'].forEach(k=>localStorage.removeItem(k));try{indexedDB.deleteDatabase('MusicRandomDB');}catch(e){}localStorage.setItem('nolApkClean_v2','1');}
+
+// Notifikasi Toast Ringan
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000);}
+
+// Manajemen Tombol Kembali Android
 const anyModalOpen=()=>['setModal','qModal','cardModal'].some(id=>document.getElementById(id).classList.contains('open'));
 let lastBack=0;history.pushState({nol:1},'');
 addEventListener('popstate',()=>{
@@ -400,18 +440,21 @@ addEventListener('popstate',()=>{
   if(Date.now()-lastBack<2000){history.back();return;}
   lastBack=Date.now();history.pushState({nol:1},'');showToast('Tekan sekali lagi untuk keluar');
 });
+
+// Pengaturan Preferensi & 12 Warna Tema
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const cv=document.getElementById('viz'),ctx=cv.getContext('2d');function size(){cv.width=innerWidth;cv.height=innerHeight;}size();addEventListener('resize',size);
-const prefs=Object.assign({viz:true,vinyl:true,resume:true},JSON.parse(localStorage.getItem('nolPrefs')||'{}'));
+const prefs=Object.assign({viz:true,vinyl:true,resume:true,bgPlay:true},JSON.parse(localStorage.getItem('nolPrefs')||'{}'));
 function savePrefs(){try{localStorage.setItem('nolPrefs',JSON.stringify(prefs));}catch(e){}}
 function applyPrefs(){
   cv.style.display=prefs.viz?'block':'none';
   document.body.classList.toggle('no-spin',!prefs.vinyl);
+  document.getElementById('optBgPlay').classList.toggle('on',prefs.bgPlay);
   document.getElementById('optViz').classList.toggle('on',prefs.viz);
   document.getElementById('optVinyl').classList.toggle('on',prefs.vinyl);
   document.getElementById('optResume').classList.toggle('on',prefs.resume);
 }
-  const themes=[
+const themes=[
   {id:'lime',name:'Neon Limau',bg:'#0d0716',card:'#170e26',line:'#2b1f40',lime:'#c6ff3d',violet:'#8b5cf6',muted:'#9d8fbd'},
   {id:'ocean',name:'Samudra Biru',bg:'#06111c',card:'#0d1f33',line:'#1b3654',lime:'#38bdf8',violet:'#0284c7',muted:'#89a8c7'},
   {id:'rose',name:'Mawar Velvet',bg:'#170811',card:'#26101d',line:'#421c33',lime:'#ff4fa3',violet:'#db2777',muted:'#c293ab'},
@@ -425,7 +468,7 @@ function applyPrefs(){
   {id:'mint',name:'Mint Segar',bg:'#071412',card:'#0e2622',line:'#1b453e',lime:'#2dd4bf',violet:'#0d9488',muted:'#8bbab3'},
   {id:'lavender',name:'Lavender Soft',bg:'#110d1c',card:'#1d1730',line:'#342a52',lime:'#a5b4fc',violet:'#6366f1',muted:'#9fa4c9'}
 ];
-  let curTheme=localStorage.getItem('nolTheme')||'lime';
+let curTheme=localStorage.getItem('nolTheme')||'lime';
 function applyTheme(id){
   const th=themes.find(x=>x.id===id)||themes[0];curTheme=th.id;
   const r=document.documentElement.style;
@@ -438,72 +481,184 @@ function applyTheme(id){
 document.getElementById('themeGrid').innerHTML=themes.map(t=>`<button type="button" class="th-btn" data-th="${t.id}"><span class="th-dot" style="background:${t.lime}"></span><span>${t.name}</span></button>`).join('');
 document.querySelectorAll('.th-btn').forEach(b=>b.onclick=()=>{applyTheme(b.dataset.th);showToast('Tema: '+b.textContent.trim());});
 applyTheme(curTheme);applyPrefs();
+
+// Inisialisasi State Pemutar & Metadata Lagu
 const audio=document.getElementById('audio'),seek=document.getElementById('seek'),fsSeek=document.getElementById('fsSeek');
 const curTimeEl=document.getElementById('curTime'),durTimeEl=document.getElementById('durTime'),fsCurEl=document.getElementById('fsCur'),fsDurEl=document.getElementById('fsDur');
 const tracks=[...document.querySelectorAll('.track')];
+
+  // Ekstraksi Nama Artis & Album secara Permanen agar Tetap Akurat
 const getArtist=tr=>tr.dataset.artist||(tr.dataset.artist=tr.querySelector('.sub').textContent.split('·')[0].trim());
+const getAlbum=tr=>tr.dataset.album||(tr.dataset.album=(tr.querySelector('.sub').textContent.split('·')[1]||'NolSongs').trim());
+tracks.forEach(tr=>{getArtist(tr);getAlbum(tr);});
+
 const lastState=prefs.resume?JSON.parse(localStorage.getItem('nolLast')||'null'):null;
-let AC,analyser,data,timer,playing=false,synthMode=false,shuffle=false,repMode='all',bpm=82,curIdx=lastState&&tracks[lastState.idx]?lastState.idx:0,resumeTime=lastState?+lastState.time||0:0,step=0,filterMode='all',artistFilter='all',speedIdx=0,sleepMins=0,sleepEnd=0,lastSaveTs=0,syncedLines=[],lastActLine=-1,plainMode=false,countedIdx=-1,playQueue=[];
+let AC,analyser,data,timer,playing=false,userPaused=true,synthMode=false,shuffle=false,repMode='all',bpm=82,curIdx=lastState&&tracks[lastState.idx]?lastState.idx:0,resumeTime=lastState?+lastState.time||0:0,step=0,filterMode='all',artistFilter='all',speedIdx=0,sleepMins=0,sleepEnd=0,lastSaveTs=0,syncedLines=[],lastActLine=-1,plainMode=false,countedIdx=-1,playQueue=[];
 const fmt=s=>!isFinite(s)||s<0?'0:00':Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+
 function paintSeek(){
   const pct=Math.min(100,Math.max(0,((+seek.value||0)/(+seek.max||100))*100));
   seek.style.background=`linear-gradient(90deg,var(--lime) ${pct}%,var(--line) ${pct}%)`;
   fsSeek.style.background=`linear-gradient(90deg,#fff ${pct}%,rgba(255,255,255,.25) ${pct}%)`;
   document.getElementById('mProg').style.width=pct+'%';
-  }
-  function saveLastState(){if(!prefs.resume)return;try{localStorage.setItem('nolLast',JSON.stringify({idx:curIdx,time:isFinite(audio.currentTime)?audio.currentTime:0}));}catch(e){}}
-function getMediaArtDataUrl(imgEl){
+}
+function saveLastState(){if(!prefs.resume)return;try{localStorage.setItem('nolLast',JSON.stringify({idx:curIdx,time:isFinite(audio.currentTime)?audio.currentTime:0}));}catch(e){}}
+
+// =========================================================================
+// BACKGROUND ANTI-KILL & CONTROL CENTER MEDIASESSION ENGINE
+// =========================================================================
+let bgAC=null,bgOsc=null,bgGain=null;
+
+  // 1. Menjaga Fokus Audio Android tetap aktif memakai Oscillator senyap WebAudio
+function startBgAudioFocus(){
+  if(!prefs.bgPlay)return;
   try{
-    const c=document.createElement('canvas');c.width=c.height=256;
+    if(!bgAC){
+      const Ctx=window.AudioContext||window.webkitAudioContext;
+      if(!Ctx)return;
+      bgAC=new Ctx();
+      bgOsc=bgAC.createOscillator();
+      bgGain=bgAC.createGain();
+      bgOsc.type='sine';
+      bgOsc.frequency.value=20; // Frekuensi sub-bass rendah
+      bgGain.gain.value=0.00005; // Hampir nol (tidak terdengar, namun menjaga jalur audio aktif)
+      bgOsc.connect(bgGain);
+      bgGain.connect(bgAC.destination);
+      bgOsc.start();
+    }
+    if(bgAC.state==='suspended')bgAC.resume().catch(()=>{});
+  }catch(e){}
+}
+function stopBgAudioFocus(){
+  try{
+    if(bgAC&&bgAC.state==='running')bgAC.suspend().catch(()=>{});
+  }catch(e){}
+}
+
+// 2. Render Sampul Album Offline 512x512 untuk Widget Control Center Android
+const art512Cache={};
+function getMediaArtDataUrl(imgEl,tr){
+  const key=tr?tr.dataset.src:'default';
+  try{
+    const c=document.createElement('canvas');c.width=c.height=512;
     const g=c.getContext('2d');
     if(imgEl&&imgEl.complete&&imgEl.naturalWidth>0){
-      g.drawImage(imgEl,0,0,256,256);
-      return c.toDataURL('image/jpeg',0.85);
+      g.drawImage(imgEl,0,0,512,512);
+      const url=c.toDataURL('image/jpeg',0.9);
+      art512Cache[key]=url;
+      return url;
     }
   }catch(e){}
-  const c=document.createElement('canvas');c.width=c.height=256;
+  if(art512Cache[key])return art512Cache[key];
+
+  // Gambar sampul vinyl 512x512 offline berkualitas tinggi saat offline / CORS
+  const c=document.createElement('canvas');c.width=c.height=512;
   const g=c.getContext('2d');
-  g.fillStyle='#150c24';g.fillRect(0,0,256,256);
-  g.fillStyle='#c6ff3d';g.font='bold 42px sans-serif';g.textAlign='center';g.fillText('NolMusic',128,142);
+  const th=themes.find(x=>x.id===curTheme)||themes[0];
+  const gr=g.createLinearGradient(0,0,512,512);
+  gr.addColorStop(0,th.card);gr.addColorStop(1,th.bg);
+  g.fillStyle=gr;g.fillRect(0,0,512,512);
+
+  // Piringan hitam & aksen warna tema
+  g.beginPath();g.arc(256,256,196,0,Math.PI*2);g.fillStyle='#111116';g.fill();
+  g.lineWidth=6;g.strokeStyle=th.lime;g.stroke();
+  g.beginPath();g.arc(256,256,145,0,Math.PI*2);g.lineWidth=2;g.strokeStyle='rgba(255,255,255,0.14)';g.stroke();
+  g.beginPath();g.arc(256,256,82,0,Math.PI*2);g.fillStyle=th.lime;g.fill();
+  g.beginPath();g.arc(256,256,18,0,Math.PI*2);g.fillStyle=th.bg;g.fill();
+
+  g.fillStyle='#ffffff';g.font='bold 26px sans-serif';g.textAlign='center';
+  g.fillText((tr?tr.dataset.t:'NolSongs').slice(0,24),256,486);
   return c.toDataURL('image/png');
 }
+
+// 3. Sinkronisasi Posisi & Metadata Control Center Android ('Artist - Album')
 function syncMediaPosition(){
   if(!('mediaSession' in navigator)||!isFinite(audio.duration)||audio.duration<=0)return;
-  try{navigator.mediaSession.setPositionState({duration:audio.duration,playbackRate:audio.playbackRate||1,position:Math.min(audio.currentTime,audio.duration)});}catch(e){}
+  try{
+    navigator.mediaSession.setPositionState({
+      duration:audio.duration,
+      playbackRate:audio.playbackRate||1,
+      position:Math.min(Math.max(0,audio.currentTime),audio.duration)
+    });
+  }catch(e){}
 }
+
 function updateMediaSession(){
   if(!('mediaSession' in navigator))return;
-  const tr=tracks[curIdx],artUrl=getMediaArtDataUrl(tr.querySelector('img'));
+  const tr=tracks[curIdx];
+  const artist=getArtist(tr);
+  const album=getAlbum(tr);
+  const artUrl=getMediaArtDataUrl(tr.querySelector('img'),tr);
   try{
     navigator.mediaSession.metadata=new MediaMetadata({
       title:tr.dataset.t,
-      artist:getArtist(tr),
-      album:'NolMusic',
+      artist:artist+' - '+album,
+      album:album,
       artwork:[
         {src:artUrl,sizes:'256x256',type:'image/png'},
         {src:artUrl,sizes:'512x512',type:'image/png'}
       ]
-        
-  });
+    });
     navigator.mediaSession.playbackState=playing?'playing':'paused';
   }catch(e){}
 }
+// Handler Tombol Control Center (Play, Pause, Prev, Next, SeekTo)
 if('mediaSession' in navigator){
   const act=(n,fn)=>{try{navigator.mediaSession.setActionHandler(n,fn);}catch(e){}};
   act('play',()=>play());
   act('pause',()=>stop());
+  act('stop',()=>stop());
   act('previoustrack',()=>loadTrack(curIdx-1,true));
   act('nexttrack',()=>nextTrack());
-  act('seekbackward',d=>{if(isFinite(audio.duration)){audio.currentTime=Math.max(0,audio.currentTime-(d.seekOffset||10));syncMediaPosition();}});
-  act('seekforward',d=>{if(isFinite(audio.duration)){audio.currentTime=Math.min(audio.duration,audio.currentTime+(d.seekOffset||10));syncMediaPosition();}});
-  act('seekto',d=>{if(d.seekTime!=null&&isFinite(audio.duration)){audio.currentTime=d.seekTime;syncMediaPosition();}});
+  act('seekbackward',d=>{if(isFinite(audio.duration)){audio.currentTime=Math.max(0,audio.currentTime-(d.seekOffset||10));saveLastState();syncMediaPosition();syncLyricsTime(true);}});
+  act('seekforward',d=>{if(isFinite(audio.duration)){audio.currentTime=Math.min(audio.duration,audio.currentTime+(d.seekOffset||10));saveLastState();syncMediaPosition();syncLyricsTime(true);}});
+  act('seekto',d=>{if(d.seekTime!=null&&isFinite(audio.duration)){audio.currentTime=Math.max(0,Math.min(audio.duration,d.seekTime));saveLastState();syncMediaPosition();syncLyricsTime(true);}});
 }
+
+// WakeLock layar saat diputar di depan
 let wakeLock=null;
 async function reqWakeLock(){try{if('wakeLock' in navigator&&!wakeLock)wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}
 function relWakeLock(){try{if(wakeLock){wakeLock.release();wakeLock=null;}}catch(e){}}
-audio.addEventListener('play',()=>{updateMediaSession();syncMediaPosition();reqWakeLock();});
-audio.addEventListener('playing',()=>{updateMediaSession();syncMediaPosition();});
-audio.addEventListener('pause',()=>{updateMediaSession();relWakeLock();});
+
+// 4. Pemulihan Pemutaran Otomatis saat Jeda Tak Terduga (userPaused === false)
+function ensureBackgroundPlayback(){
+  if(userPaused||!playing||!prefs.bgPlay||audio.ended)return;
+  startBgAudioFocus();
+  if(audio.paused&&!synthMode){
+    audio.play().then(()=>{
+      updateMediaSession();
+      syncMediaPosition();
+    }).catch(()=>{});
+  }
+}
+audio.addEventListener('play',()=>{userPaused=false;startBgAudioFocus();updateMediaSession();syncMediaPosition();reqWakeLock();});
+audio.addEventListener('playing',()=>{userPaused=false;startBgAudioFocus();updateMediaSession();syncMediaPosition();});
+audio.addEventListener('pause',()=>{
+  if(!userPaused&&playing&&prefs.bgPlay&&!audio.ended){
+    // Jika dijeda paksa oleh sistem Android saat keluar aplikasi/layar mati, lanjutkan otomatis
+    ensureBackgroundPlayback();
+    setTimeout(ensureBackgroundPlayback,120);
+    setTimeout(ensureBackgroundPlayback,420);
+    return;
+  }
+  updateMediaSession();
+  relWakeLock();
+});
+
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){saveStats();saveLastState();}
+  ensureBackgroundPlayback();
+  setTimeout(ensureBackgroundPlayback,150);
+});
+window.addEventListener('blur',()=>{
+  ensureBackgroundPlayback();
+  setTimeout(ensureBackgroundPlayback,150);
+});
+window.addEventListener('focus',()=>{
+  ensureBackgroundPlayback();
+});
+
+// Ekstraksi Warna Dominan dari Sampul Lagu untuk Latar Lirik
 const palettes=[['#7a2617','#2d0d08'],['#1e4d5c','#0b2028'],['#4c2875','#1c0e2e'],['#6e3b18','#291507'],['#1f543d','#0b2218'],['#6b1d3a','#290a16'],['#2b3e6e','#10182d']];
 function applyCoverTheme(url,idx){
   const setP=(c1,c2)=>{document.documentElement.style.setProperty('--lc1',c1);document.documentElement.style.setProperty('--lc2',c2);};
@@ -511,8 +666,10 @@ function applyCoverTheme(url,idx){
   const im=new Image();im.crossOrigin='anonymous';
   im.onload=()=>{try{const c=document.createElement('canvas');c.width=c.height=12;const g=c.getContext('2d');g.drawImage(im,0,0,12,12);const d=g.getImageData(0,0,12,12).data;let r=0,gr=0,b=0,n=0;for(let i=0;i<d.length;i+=4){if(d[i]+d[i+1]+d[i+2]>45){r+=d[i];gr+=d[i+1];b+=d[i+2];n++;}}if(n){r=Math.min(155,Math.max(45,Math.round(r/n*.75)));gr=Math.min(130,Math.max(25,Math.round(gr/n*.75)));b=Math.min(155,Math.max(30,Math.round(b/n*.75)));setP(`rgb(${r},${gr},${b})`,`rgb(${Math.round(r*.38)},${Math.round(gr*.38)},${Math.round(b*.38)})`);}}catch(e){}};
   im.src=url;
-  }
-  function syncLyricsTime(force){
+}
+
+// Sinkronisasi Baris Lirik Real-Time
+function syncLyricsTime(force){
   if(!syncedLines.length)return;let idx=-1;
   if(plainMode){
     const dur=isFinite(audio.duration)&&audio.duration>0?audio.duration:0;
@@ -533,12 +690,16 @@ audio.addEventListener('timeupdate',()=>{
   if(Date.now()-lastSaveTs>2000){lastSaveTs=Date.now();saveLastState();}
 });
 seek.oninput=fsSeek.oninput=function(){const v=+this.value;seek.value=fsSeek.value=v;curTimeEl.textContent=fsCurEl.textContent=fmt(v);paintSeek();if(isFinite(audio.duration)){audio.currentTime=v;saveLastState();syncMediaPosition();syncLyricsTime(true);}};
+// Pemuat Cover Resmi & Ekstraksi Sampul ID3 MP3
 const artCache=JSON.parse(localStorage.getItem('nolArt')||'{}');
 function setCover(tr,url,idx){
-  if(!url)return;tr.querySelector('img').src=url;
+  if(!url)return;
+  const img=tr.querySelector('img');
+  img.onload=()=>{if(idx===curIdx)updateMediaSession();};
+  img.src=url;
   if(idx===curIdx){document.getElementById('pArt').src=document.getElementById('mImg').src=url;document.querySelector('.label').style.backgroundImage=`url('${url}')`;applyCoverTheme(url,idx);updateMediaSession();}
-  }
-  async function extractID3Art(blob){
+}
+async function extractID3Art(blob){
   try{
     const u=new Uint8Array(await blob.slice(0,300000).arrayBuffer());if(u[0]!==73||u[1]!==68||u[2]!==51)return null;
     const ver=u[3],tagSize=((u[6]&127)<<21)|((u[7]&127)<<14)|((u[8]&127)<<7)|(u[9]&127);let p=10,end=Math.min(u.length,tagSize+10);
@@ -569,8 +730,9 @@ function loadOfficialCovers(){
     im.onerror=()=>{if(artCache[key]&&!tr.dataset.id3art)setCover(tr,artCache[key],i);else fetchCoverJSONP(tr,i);};
     im.src=localJpg;
   });
-  }
-  const OFFLINE_LYRICS={
+}
+// Database 60 Lirik Offline Bawaan
+const OFFLINE_LYRICS={
   'Dunia-Yang-Nanti.mp3':'Tenang saja semua kan baik-baik saja\nLangit selalu punya cara menjaga\nLangkah kecil kita hari ini\nAkan terjawab di dunia yang nanti',
   'Bersenja-Gurau.mp3':'Mari duduk sebentar bersenja gurau\nMelepas penat yang seharian kacau\nTawa kecilmu obat paling manjur\nSaat dunia terasa begitu kabur',
   'Lesung-Pipi.mp3':'Senyummu manis dengan lesung pipi\nMembuat malamku tak lagi sepi\nTak perlu janji yang terlalu tinggi\nCukup kau ada di sisi setiap hari',
@@ -615,7 +777,6 @@ function loadOfficialCovers(){
   'Selamanya.mp3':'Ku ingin bersamamu selamanya\nMenjaga cinta hingga akhir masa\nTakkan kubiarkan jarak memisahkan\nDua hati yang telah dipersatukan',
   'Hitamku.mp3':'Kini kau telah pergi tinggalkanku\nMenyisakan hitam di dalam hidupku\nNamun bayangmu tetap abadi\nTersimpan rapi di relung hati',
   'Main-Hati.mp3':'Jangan pernah kau main hati\nBila tak sungguh mencintai\nKarena hati bukan tempat singgah\nUntuk ditinggalkan begitu saja',
-  'Main-Hati.mp3':'Jangan pernah kau main hati\nBila tak sungguh mencintai\nKarena hati bukan tempat singgah\nUntuk ditinggalkan begitu saja',
   'Masa-Ini-Nanti-dan-Indah-Lainnya.mp3':'Nikmati masa ini dan nanti\nSegala indah yang kan menghampiri\nSelama kita saling menggenggam\nSemua mimpi pasti kan terwujud nyata',
   'Kembali-Kecil.mp3':'Ingin rasanya kembali kecil\nTanpa beban yang terasa mustahil\nTertawa lepas tanpa rasa takut\nSebelum dewasa datang menjemput',
   'Mengenal-Lebih-Jauh.mp3':'Beri aku waktu mengenal lebih jauh\nTentang hatimu yang selama ini teduh\nTak perlu terburu mengejar arah\nBiarlah rasa tumbuh perlahan indah',
@@ -633,7 +794,9 @@ function loadOfficialCovers(){
   'Dehidrasi.mp3':'Terlalu banyak berlari mengejar validasi\nSampai lupa memberi ruang bagi diri sendiri\nIstirahat sejenak sebelum kehabisan energi\nTenangkan pikiran dari bisingnya hari',
   'Untuk-Apa.mp3':'Untuk apa semua yang kita kejar selama ini\nBila akhirnya hanya menyisakan sepi\nMenang banyak hal namun kehilangan arah\nMari duduk sebentar dan bertanya untuk apa'
 };
-  const stats=Object.assign({daily:{},tracks:{},artists:{}},JSON.parse(localStorage.getItem('nolStats_v1')||'{}'));
+
+// Statistik Waktu Mendengarkan & Peringkat
+const stats=Object.assign({daily:{},tracks:{},artists:{}},JSON.parse(localStorage.getItem('nolStats_v1')||'{}'));
 const dayKey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 function saveStats(){try{localStorage.setItem('nolStats_v1',JSON.stringify(stats));}catch(e){}}
 function fmtDur(sec){sec=Math.floor(sec||0);if(sec<60)return sec+' dtk';const m=Math.floor(sec/60),h=Math.floor(m/60);return h?h+'j '+(m%60)+'m':m+' mnt';}
@@ -643,8 +806,8 @@ function recordPlayStart(idx){
   if(!stats.tracks[src])stats.tracks[src]={plays:0,sec:0};
   if(!stats.artists[art])stats.artists[art]={plays:0,sec:0};
   stats.tracks[src].plays++;stats.artists[art].plays++;saveStats();
-}
-let statTick=0;
+  }
+  let statTick=0;
 setInterval(()=>{
   if(!playing||(audio.paused&&!synthMode))return;
   const k=dayKey(),tr=tracks[curIdx],src=tr.dataset.src,art=getArtist(tr);
@@ -655,7 +818,8 @@ setInterval(()=>{
   if(++statTick%5===0)saveStats();
   if(document.getElementById('setModal').classList.contains('open'))document.getElementById('stToday').textContent=fmtDur(stats.daily[k]);
 },1000);
-  addEventListener('visibilitychange',()=>{if(document.hidden){saveStats();saveLastState();}});
+
+// Manajemen Antrean Lagu
 function updateQueueUI(){
   const b=document.getElementById('qBadge');b.textContent=playQueue.length;b.classList.toggle('show',playQueue.length>0);
   const box=document.getElementById('qList');
@@ -669,6 +833,7 @@ function updateQueueUI(){
     const idx=playQueue.splice(+el.dataset.qpos,1)[0];updateQueueUI();document.getElementById('qModal').classList.remove('open');loadTrack(idx,true);
   });
 }
+
 function renderSettings(){
   const today=dayKey(),todaySec=stats.daily[today]||0;
   const totalSec=Object.values(stats.daily).reduce((a,b)=>a+b,0);
@@ -688,24 +853,30 @@ function renderSettings(){
   const topA=Object.entries(stats.artists).filter(([,v])=>v.plays>0).sort((a,b)=>b[1].plays-a[1].plays||b[1].sec-a[1].sec).slice(0,5);
   document.getElementById('topArtists').innerHTML=topA.length?topA.map(([art,v],i)=>`<div class="rank-item" style="cursor:default"><span class="rank-num">#${i+1}</span><div class="rank-info"><b>${art}</b><small>Didengarkan ${fmtDur(v.sec)}</small></div><span class="rank-badge">${v.plays}x</span></div>`).join(''):'<p style="font-size:.8rem;color:var(--muted)">Belum ada data artis.</p>';
   }
-  function initSynth(){if(AC)return;AC=new (window.AudioContext||window.webkitAudioContext)();analyser=AC.createAnalyser();analyser.fftSize=128;data=new Uint8Array(analyser.frequencyBinCount);const m=AC.createGain();m.gain.value=.3;m.connect(analyser);analyser.connect(AC.destination);AC._m=m;}
+  // Fallback Synthesizer Jika File MP3 Belum Dipilih
+function initSynth(){if(AC)return;AC=new (window.AudioContext||window.webkitAudioContext)();analyser=AC.createAnalyser();analyser.fftSize=128;data=new Uint8Array(analyser.frequencyBinCount);const m=AC.createGain();m.gain.value=.3;m.connect(analyser);analyser.connect(AC.destination);AC._m=m;}
 function playNote(t,f){const o=AC.createOscillator(),g=AC.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.22,t);g.gain.exponentialRampToValueAtTime(.001,t+.65);o.connect(g);g.connect(AC._m);o.start(t);o.stop(t+.65);}
 function playKick(t){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(38,t+.16);g.gain.setValueAtTime(.7,t);g.gain.exponentialRampToValueAtTime(.001,t+.28);o.connect(g);g.connect(AC._m);o.start(t);o.stop(t+.28);}
 const chords=[[261.6,329.6,392,493.9],[220,261.6,329.6,392],[174.6,220,261.6,349.2],[196,246.9,293.7,392]];
 function schedule(){const t=AC.currentTime+.05;if(step%4===0)playKick(t);const ch=chords[Math.floor(step/8)%chords.length];playNote(t,ch[(step+curIdx)%ch.length]);step++;}
-function startSynth(){initSynth();if(AC.state==='suspended')AC.resume();synthMode=true;setUIPlaying(true);recordPlayStart(curIdx);document.getElementById('nowSub').textContent='Ketuk ikon folder di lagu untuk MP3';clearInterval(timer);timer=setInterval(schedule,60000/bpm/2);}
+function startSynth(){userPaused=false;startBgAudioFocus();initSynth();if(AC.state==='suspended')AC.resume();synthMode=true;setUIPlaying(true);recordPlayStart(curIdx);document.getElementById('nowSub').textContent='Ketuk ikon folder di lagu untuk MP3';clearInterval(timer);timer=setInterval(schedule,60000/bpm/2);}
+
 function setUIPlaying(state){
   playing=state;document.body.classList.toggle('playing',state);
   const ic=state?'ri-pause-fill':'ri-play-fill';['#play i','#mPlay i','#fsPlay i'].forEach(s=>document.querySelector(s).className=ic);
-  if('mediaSession' in navigator)navigator.mediaSession.playbackState=state?'playing':'paused';
+  updateMediaSession();
 }
+
 function cycleSpeed(){
   const rates=[1,0.85,1.15];speedIdx=(speedIdx+1)%rates.length;const r=rates[speedIdx];
   audio.preservesPitch=audio.mozPreservesPitch=audio.webkitPreservesPitch=false;audio.playbackRate=r;
   document.getElementById('spdTxt').textContent=r+'x';document.getElementById('spd').classList.toggle('on',speedIdx!==0);
   document.querySelector('.vinyl').style.animationDuration=(2.4/r)+'s';
+  syncMediaPosition();
   showToast(r===1?'Kecepatan Normal (1x)':r<1?'Mode Slowed (0.85x)':'Mode Sped Up (1.15x)');
 }
+
+// Pemuat Lirik Sinkron Online & Offline
 const lyrCache=JSON.parse(localStorage.getItem('nolLyrics3')||'{}');
 function setLyrMsg(msg){['lBody','fsBody'].forEach(id=>{const b=document.getElementById(id);b.scrollTop=0;b.textContent=msg;});document.getElementById('liveLine').textContent='';}
 function renderLyrics(data){
@@ -715,7 +886,7 @@ function renderLyrics(data){
     if(syncedLines.length){
       const html=syncedLines.map(x=>`<div class="lyr-line" data-t="${x.t}">${x.txt.replace(/</g,'&lt;')}</div>`).join('');
       document.getElementById('liveLine').textContent=syncedLines[0].txt;
-      ['lBody','fsBody'].forEach(id=>{const box=document.getElementById(id);box.scrollTop=0;box.innerHTML=html;box.querySelectorAll('.lyr-line').forEach(el=>el.onclick=()=>{if(isFinite(audio.duration)){audio.currentTime=+el.dataset.t;syncLyricsTime(true);}});});
+      ['lBody','fsBody'].forEach(id=>{const box=document.getElementById(id);box.scrollTop=0;box.innerHTML=html;box.querySelectorAll('.lyr-line').forEach(el=>el.onclick=()=>{if(isFinite(audio.duration)){audio.currentTime=+el.dataset.t;syncMediaPosition();syncLyricsTime(true);}});});
       syncLyricsTime(true);return;
     }
   }
@@ -723,7 +894,7 @@ function renderLyrics(data){
   if(!plain){setLyrMsg('Lirik belum tersedia.');return;}
   plainMode=true;syncedLines=plain.split('\n').map(s=>s.trim()).filter(Boolean).map(txt=>({t:-1,txt}));
   const html=syncedLines.map((x,i)=>`<div class="lyr-line" data-i="${i}">${x.txt.replace(/</g,'&lt;')}</div>`).join('');
-  ['lBody','fsBody'].forEach(id=>{const box=document.getElementById(id);box.scrollTop=0;box.innerHTML=html;box.querySelectorAll('.lyr-line').forEach(el=>el.onclick=()=>{if(isFinite(audio.duration)){audio.currentTime=(+el.dataset.i/syncedLines.length)*audio.duration;syncLyricsTime(true);}});});
+  ['lBody','fsBody'].forEach(id=>{const box=document.getElementById(id);box.scrollTop=0;box.innerHTML=html;box.querySelectorAll('.lyr-line').forEach(el=>el.onclick=()=>{if(isFinite(audio.duration)){audio.currentTime=(+el.dataset.i/syncedLines.length)*audio.duration;syncMediaPosition();syncLyricsTime(true);}});});
   syncLyricsTime(true);
 }
 async function autoLoadLyrics(idx){
@@ -738,6 +909,7 @@ async function autoLoadLyrics(idx){
     if(j&&(j.syncedLyrics||j.plainLyrics)){lyrCache[key]={synced:j.syncedLyrics||'',plain:j.plainLyrics||off};try{localStorage.setItem('nolLyrics3',JSON.stringify(lyrCache));}catch(e){}if(idx===curIdx)renderLyrics(lyrCache[key]);}
   }catch(e){}
 }
+// Kontrol Muat, Putar & Hentikan Lagu
 function loadTrack(idx,autoPlay=true){
   curIdx=(idx+tracks.length)%tracks.length;countedIdx=-1;const tr=tracks[curIdx],art=tr.querySelector('img').src;
   tracks.forEach(x=>x.classList.toggle('on',x===tr));bpm=+tr.dataset.bpm||85;seek.value=fsSeek.value=0;curTimeEl.textContent=fsCurEl.textContent='0:00';durTimeEl.textContent=fsDurEl.textContent='0:00';paintSeek();
@@ -745,23 +917,32 @@ function loadTrack(idx,autoPlay=true){
   document.getElementById('nowSub').textContent=getArtist(tr)+' · '+bpm+' BPM';document.getElementById('mSub').textContent=document.getElementById('fsSub').textContent=getArtist(tr);
   document.getElementById('pArt').src=document.getElementById('mImg').src=art;document.querySelector('.label').style.backgroundImage=`url('${art}')`;
   applyCoverTheme(art,curIdx);updateMediaSession();autoLoadLyrics(curIdx);if(autoPlay){resumeTime=0;play();}
-  }
-  function nextTrack(){
+}
+function nextTrack(){
   if(playQueue.length){const nxt=playQueue.shift();updateQueueUI();loadTrack(nxt,true);return;}
   if(shuffle&&tracks.length>1){let r;do{r=Math.floor(Math.random()*tracks.length);}while(r===curIdx);loadTrack(r,true);}else loadTrack(curIdx+1,true);
 }
 function tryPlaySources(list,i=0,isBundled=false){
   if(i>=list.length){startSynth();if(location.protocol==='content:')document.getElementById('nowSub').textContent='Buka lewat Folder di Acode / APK untuk MP3';return;}
+  userPaused=false;
   audio.src=list[i];
-  audio.play().then(()=>{if(isBundled)document.body.classList.add('bundled');setUIPlaying(true);recordPlayStart(curIdx);document.getElementById('nowSub').textContent=getArtist(tracks[curIdx])+' · '+bpm+' BPM';updateMediaSession();saveLastState();}).catch(()=>tryPlaySources(list,i+1,isBundled));
+  audio.play().then(()=>{if(isBundled)document.body.classList.add('bundled');startBgAudioFocus();setUIPlaying(true);recordPlayStart(curIdx);document.getElementById('nowSub').textContent=getArtist(tracks[curIdx])+' · '+bpm+' BPM';updateMediaSession();saveLastState();}).catch(()=>tryPlaySources(list,i+1,isBundled));
 }
 function play(){
+  userPaused=false;
+  startBgAudioFocus();
   clearInterval(timer);synthMode=false;audio.volume=1;const tr=tracks[curIdx];
   if(tr.dataset.blob){if(audio.src===tr.dataset.blob&&audio.currentTime>0&&!audio.ended){audio.play().then(()=>{setUIPlaying(true);recordPlayStart(curIdx);});return;}tryPlaySources([tr.dataset.blob],0,false);return;}
   if(audio.currentTime>0&&audio.getAttribute('data-idx')===String(curIdx)&&!audio.ended){audio.play().then(()=>{setUIPlaying(true);recordPlayStart(curIdx);}).catch(()=>startSynth());return;}
   audio.setAttribute('data-idx',String(curIdx));const raw=tr.dataset.src;tryPlaySources([...new Set(['./'+raw,raw,raw.toLowerCase(),raw.replace(/-/g,' ')])],0,true);
 }
-function stop(){clearInterval(timer);audio.pause();audio.volume=1;synthMode=false;setUIPlaying(false);saveLastState();saveStats();}
+function stop(){
+  userPaused=true;
+  stopBgAudioFocus();
+  clearInterval(timer);audio.pause();audio.volume=1;synthMode=false;setUIPlaying(false);saveLastState();saveStats();
+}
+
+// Generator Kartu Lirik untuk Dibagikan
 let cardSel=[],cardMode=0;
 function drawLyricCard(){
   const c=document.getElementById('cardCanvas'),g=c.getContext('2d'),tr=tracks[curIdx];
@@ -779,7 +960,7 @@ function drawLyricCard(){
     words.forEach(w=>{const test=cur?cur+' '+w:w;if(g.measureText(test).width>460){g.fillText(cur,68,y);y+=44;cur=w;}else cur=test;});
     if(cur){g.fillText(cur,68,y);y+=56;}
   });
-  g.fillStyle=st[2];g.font='900 24px Unbounded,sans-serif';g.fillText('NolMusic',68,682);
+  g.fillStyle=st[2];g.font='900 24px Unbounded,sans-serif';g.fillText('NolSongs',68,682);
   g.fillStyle=sub;g.font='500 16px Inter,sans-serif';g.fillText('A Nolson Music Experience',236,681);
 }
 function openLyricCard(){
@@ -797,10 +978,13 @@ function openLyricCard(){
   });
   drawLyricCard();document.getElementById('cardModal').classList.add('open');
 }
+
+// Inisialisasi Awal & Event Listener Tombol UI
 loadOfficialCovers();loadTrack(curIdx,false);
 document.getElementById('play').onclick=document.getElementById('mPlay').onclick=document.getElementById('fsPlay').onclick=()=>playing?stop():play();
 document.getElementById('prev').onclick=()=>loadTrack(curIdx-1,true);
 document.getElementById('next').onclick=document.getElementById('mNext').onclick=()=>nextTrack();
+
 let mSwiped=false,mSx=0,mSy=0;const miniEl=document.getElementById('mini');
 miniEl.addEventListener('touchstart',e=>{mSwiped=false;mSx=e.touches[0].clientX;mSy=e.touches[0].clientY;},{passive:true});
 miniEl.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-mSx,dy=e.changedTouches[0].clientY-mSy;if(Math.abs(dx)>52&&Math.abs(dx)>Math.abs(dy)*1.4){mSwiped=true;if(dx<0){nextTrack();showToast('Lagu berikutnya');}else{loadTrack(curIdx-1,true);showToast('Lagu sebelumnya');}}},{passive:true});
@@ -809,10 +993,10 @@ document.getElementById('spd').onclick=cycleSpeed;
 document.getElementById('lShareBtn').onclick=openLyricCard;
 document.getElementById('cardClose').onclick=()=>document.getElementById('cardModal').classList.remove('open');
 document.getElementById('cardStyle').onclick=()=>{cardMode++;drawLyricCard();};
-document.getElementById('cardSave').onclick=()=>{const a=document.createElement('a');a.download='NolMusic-'+tracks[curIdx].dataset.t+'.png';a.href=document.getElementById('cardCanvas').toDataURL('image/png');a.click();showToast('Kartu lirik disimpan');};
+document.getElementById('cardSave').onclick=()=>{const a=document.createElement('a');a.download='NolSongs-'+tracks[curIdx].dataset.t+'.png';a.href=document.getElementById('cardCanvas').toDataURL('image/png');a.click();showToast('Kartu lirik disimpan');};
 document.getElementById('cardShare').onclick=()=>{
   document.getElementById('cardCanvas').toBlob(async blob=>{
-    const file=new File([blob],'NolMusic-Lirik.png',{type:'image/png'});
+    const file=new File([blob],'NolSongs-Lirik.png',{type:'image/png'});
     if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:tracks[curIdx].dataset.t});return;}catch(e){}}
     document.getElementById('cardSave').click();
   },'image/png');
@@ -825,9 +1009,17 @@ document.getElementById('fsClose').onclick=()=>document.getElementById('fsLyr').
 document.getElementById('setBtn').onclick=()=>{renderSettings();document.getElementById('setModal').classList.add('open');};
 document.getElementById('setClose').onclick=()=>document.getElementById('setModal').classList.remove('open');
 ['setModal','qModal','cardModal'].forEach(id=>document.getElementById(id).onclick=e=>{if(e.target.id===id)e.currentTarget.classList.remove('open');});
-document.getElementById('optViz').onclick=()=>{prefs.viz=!prefs.viz;savePrefs();applyPrefs();};
+
+// Toggle Pengaturan
+document.getElementById('optBgPlay').onclick=()=>{
+  prefs.bgPlay=!prefs.bgPlay;savePrefs();applyPrefs();
+  if(prefs.bgPlay&&playing)startBgAudioFocus();else stopBgAudioFocus();
+  showToast(prefs.bgPlay?'Mode Anti-Mati Latar Belakang Aktif':'Mode Anti-Mati Latar Belakang Nonaktif');
+};
+  document.getElementById('optViz').onclick=()=>{prefs.viz=!prefs.viz;savePrefs();applyPrefs();};
 document.getElementById('optVinyl').onclick=()=>{prefs.vinyl=!prefs.vinyl;savePrefs();applyPrefs();};
 document.getElementById('optResume').onclick=()=>{prefs.resume=!prefs.resume;if(!prefs.resume)localStorage.removeItem('nolLast');savePrefs();applyPrefs();};
+
 function resetLyricsCache(){['nolLyrics','nolLyrics2','nolLyrics3'].forEach(k=>localStorage.removeItem(k));for(const k in lyrCache)delete lyrCache[k];autoLoadLyrics(curIdx);showToast('Cache lirik direset');}
 document.getElementById('lResetBtn').onclick=document.getElementById('btnResetLyr').onclick=resetLyricsCache;
 let resetConfirm=0;
@@ -835,20 +1027,23 @@ document.getElementById('btnResetStats').onclick=function(){
   if(Date.now()-resetConfirm>3000){resetConfirm=Date.now();showToast('Ketuk sekali lagi untuk hapus statistik');return;}
   stats.daily={};stats.tracks={};stats.artists={};countedIdx=-1;saveStats();renderSettings();showToast('Statistik pemutaran direset');
 };
-  document.getElementById('shuf').onclick=function(){shuffle=!shuffle;this.classList.toggle('on',shuffle);};
+document.getElementById('shuf').onclick=function(){shuffle=!shuffle;this.classList.toggle('on',shuffle);};
 document.getElementById('rep').onclick=function(){repMode=repMode==='all'?'one':repMode==='one'?'off':'all';this.classList.toggle('on',repMode!=='off');this.querySelector('i').className=repMode==='one'?'ri-repeat-one-line':'ri-repeat-line';};
 document.getElementById('sleep').onclick=function(){const steps=[0,15,30,60];sleepMins=steps[(steps.indexOf(sleepMins)+1)%steps.length];sleepEnd=sleepMins?Date.now()+sleepMins*60000:0;this.classList.toggle('on',sleepMins>0);document.getElementById('sleepTxt').textContent=sleepMins?sleepMins+'m':'';};
 setInterval(()=>{if(!sleepEnd)return;const rem=sleepEnd-Date.now();if(rem<=0){sleepEnd=0;sleepMins=0;document.getElementById('sleep').classList.remove('on');document.getElementById('sleepTxt').textContent='';stop();}else{document.getElementById('sleepTxt').textContent=Math.ceil(rem/60000)+'m';if(rem<5000&&!audio.paused)audio.volume=Math.max(0.05,rem/5000);}},1000);
+
 document.getElementById('lEditBtn').onclick=()=>{const c=lyrCache[tracks[curIdx].dataset.src];document.getElementById('lInput').value=c?(c.plain||c.synced):(OFFLINE_LYRICS[tracks[curIdx].dataset.src]||'');document.getElementById('lBody').style.display='none';document.getElementById('lEditBox').style.display='flex';};
 document.getElementById('lCancelBtn').onclick=()=>{document.getElementById('lEditBox').style.display='none';document.getElementById('lBody').style.display='block';};
 document.getElementById('lSaveBtn').onclick=()=>{const txt=document.getElementById('lInput').value.trim(),key=tracks[curIdx].dataset.src;if(txt){lyrCache[key]={synced:'',plain:txt};try{localStorage.setItem('nolLyrics3',JSON.stringify(lyrCache));}catch(e){}renderLyrics(lyrCache[key]);showToast('Lirik tersimpan');}document.getElementById('lEditBox').style.display='none';document.getElementById('lBody').style.display='block';};
+
+// Filter Artis, Pencarian & Favorit (Langsung Tampil Tanpa Menunggu Scroll)
 const favs=new Set(JSON.parse(localStorage.getItem('nolFavs')||'[]'));
 const artistList=['all',...new Set(tracks.map(tr=>getArtist(tr)))];
 document.getElementById('artistChips').innerHTML=artistList.map(a=>`<button type="button" class="chip${a==='all'?' on':''}" data-art="${a.replace(/"/g,'&quot;')}">${a==='all'?'Semua Artis':a}</button>`).join('');
 document.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));ch.classList.add('on');artistFilter=ch.dataset.art;applyFilter();});
 function applyFilter(){const q=document.getElementById('search').value.toLowerCase().trim();let vis=0;tracks.forEach(tr=>{const ok=(filterMode==='all'||favs.has(tr.dataset.src))&&(artistFilter==='all'||getArtist(tr)===artistFilter)&&(!q||tr.dataset.t.toLowerCase().includes(q)||tr.textContent.toLowerCase().includes(q));tr.style.display=ok?'':'none';if(ok)vis++;});document.getElementById('noResult').style.display=vis?'none':'block';}
 applyFilter();
-document.getElementById('search').oninput=applyFilter;
+  document.getElementById('search').oninput=applyFilter;
 document.querySelectorAll('.ftab[data-f]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.ftab[data-f]').forEach(x=>x.classList.remove('on'));b.classList.add('on');filterMode=b.dataset.f;applyFilter();});
 document.getElementById('shufAllBtn').onclick=()=>{
   const visIdx=tracks.map((tr,i)=>tr.style.display!=='none'?i:-1).filter(i=>i!==-1);
@@ -857,9 +1052,11 @@ document.getElementById('shufAllBtn').onclick=()=>{
   const pick=pool[Math.floor(Math.random()*pool.length)];
   loadTrack(pick,true);showToast('Memutar acak ('+pool.length+' lagu)');
 };
+
+// Interaksi Item Lagu, Favorit, Antrean & Pilih MP3 dari HP
 const norm=s=>s.toLowerCase().replace(/\.[^.]+$/,'').replace(/[^a-z0-9]/g,'');
 tracks.forEach((tr,i)=>{
-  getArtist(tr);const qBtn=tr.querySelector('.qadd'),favBtn=tr.querySelector('.fav'),pickBtn=tr.querySelector('.pick'),fileInp=tr.querySelector('input[type="file"]');
+  const qBtn=tr.querySelector('.qadd'),favBtn=tr.querySelector('.fav'),pickBtn=tr.querySelector('.pick'),fileInp=tr.querySelector('input[type="file"]');
   qBtn.onclick=e=>{e.stopPropagation();playQueue.push(i);updateQueueUI();showToast('Antrean +1: '+tr.dataset.t);};
   const syncFav=()=>{const on=favs.has(tr.dataset.src);favBtn.classList.toggle('on',on);favBtn.querySelector('i').className=on?'ri-heart-fill':'ri-heart-line';};
   syncFav();favBtn.onclick=e=>{e.stopPropagation();favs.has(tr.dataset.src)?favs.delete(tr.dataset.src):favs.add(tr.dataset.src);localStorage.setItem('nolFavs',JSON.stringify([...favs]));syncFav();if(filterMode==='fav')applyFilter();};
@@ -871,8 +1068,13 @@ tracks.forEach((tr,i)=>{
   };
   tr.onclick=()=>{if(curIdx===i&&playing)stop();else loadTrack(i,true);};
 });
+
 audio.addEventListener('ended',()=>{countedIdx=-1;if(repMode==='one'){audio.currentTime=0;play();}else if(repMode==='off'&&!shuffle&&!playQueue.length&&curIdx===tracks.length-1){stop();}else nextTrack();});
+
+// Loop Visual Equalizer Canvas (Berhenti saat Tab/Aplikasi Latar Belakang)
 let tt=0;(function draw(){if(prefs.viz&&!document.hidden){ctx.clearRect(0,0,cv.width,cv.height);const n=64,w=cv.width/n;tt+=playing?(.03*(bpm/82)):.02;if(synthMode&&playing&&data)analyser.getByteFrequencyData(data);for(let i=0;i<n;i++){let v=synthMode&&playing&&data?(data[i%data.length]/255):(playing?(.22+.24*Math.abs(Math.sin(tt*2.4+i*.32))*Math.cos(tt+i*.15)):(.12+.08*Math.sin(tt+i*.35)));const h=Math.max(4,v*cv.height*.6);const g=ctx.createLinearGradient(0,cv.height,0,cv.height-h);g.addColorStop(0,'rgba(139,92,246,.7)');g.addColorStop(1,'rgba(198,255,61,.8)');ctx.fillStyle=g;ctx.fillRect(i*w+2,cv.height-h,w-4,h);}}if(!reduce)requestAnimationFrame(draw);})();
+
+// Animasi Scroll & Observasi Mini Player
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const el=e.target;el.classList.add('in');io.unobserve(el);setTimeout(()=>{el.classList.remove('rv');el.style.transitionDelay='';},1100);}}),{threshold:.01});
 document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%3)*100+'ms';io.observe(el);});
 new IntersectionObserver(es=>document.getElementById('mini').classList.toggle('show',!es[0].isIntersecting),{threshold:.1}).observe(document.getElementById('mainPlayer'));
