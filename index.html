@@ -1,1366 +1,838 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NolMusic — A Nolson Music Experience | Rokian Adimusa</title>
-  <meta name="description" content="NolMusic — A Nolson Music Experience. Pemutar musik Android ringan, 100% anti iklan, mendukung mode offline & online, serta fitur request lagu langsung ke developer Rokian Adimusa." />
-
-  <style>
-    /* =====================================================================
-       VARIABEL WARNA & DESIGN TOKENS (SELARAS DENGAN LOGO NOLMUSIC)
-       ===================================================================== */
-    :root {
-      --bg-primary: #0E0818;
-      --bg-secondary: #160D26;
-      --bg-card: #1C1130;
-      --bg-input: #110920;
-      --accent-neon: #C4FA28;
-      --accent-neon-hover: #b3e817;
-      --accent-purple: #8C52FF;
-      --accent-purple-soft: #B58EFF;
-      --text-main: #FFFFFF;
-      --text-muted: #C6BDD9;
-      --text-dim: #8D81A6;
-      --border-purple: rgba(140, 82, 255, 0.28);
-      --border-neon: rgba(196, 250, 40, 0.38);
-      --shadow-neon: 0 10px 28px -6px rgba(196, 250, 40, 0.35);
-      --shadow-purple: 0 16px 38px -10px rgba(140, 82, 255, 0.42);
-      --radius-md: 12px;
-      --radius-lg: 18px;
-      --radius-xl: 24px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-primary);
-      color: var(--text-main);
-      line-height: 1.6;
-    }
-
-    body {
-      min-height: 100vh;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      background-color: var(--bg-primary);
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    button {
-      font-family: inherit;
-      cursor: pointer;
-      border: none;
-      background: none;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1020px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    .brand-nol {
-      color: var(--accent-neon);
-    }
-
-    .brand-music {
-      color: var(--text-main);
-    }
-
-    /* =====================================================================
-       1. HEADER / NAVIGASI RESPONSIF
-       ===================================================================== */
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background-color: rgba(14, 8, 24, 0.9);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-purple);
-    }
-
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 66px;
-    }
-
-    .brand-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 11px;
-      font-size: 1.32rem;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-    }
-
-    .nav-logo-box {
-      width: 38px;
-      height: 38px;
-      border-radius: 11px;
-      background: linear-gradient(145deg, #21123B, #120921);
-      border: 1.5px solid var(--accent-purple);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(140, 82, 255, 0.35);
-    }
-
-    .nav-menu {
-      display: none;
-      align-items: center;
-      gap: 28px;
-    }
-
-    .nav-menu a {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      transition: color 0.2s ease;
-    }
-
-    .nav-menu a:hover {
-      color: var(--accent-neon);
-    }
-
-    .nav-menu .nav-cta {
-      padding: 8px 16px;
-      border-radius: 999px;
-      background-color: rgba(196, 250, 40, 0.12);
-      border: 1px solid var(--border-neon);
-      color: var(--accent-neon);
-      font-weight: 700;
-    }
-
-    .nav-menu .nav-cta:hover {
-      background-color: var(--accent-neon);
-      color: var(--bg-primary);
-    }
-
-    .hamburger-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-md);
-      background-color: var(--bg-secondary);
-      border: 1px solid var(--border-purple);
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: border-color 0.2s ease, background-color 0.2s ease;
-    }
-
-    .hamburger-btn:active {
-      background-color: var(--bg-card);
-      border-color: var(--accent-neon);
-    }
-
-    .mobile-drawer {
-      display: none;
-      flex-direction: column;
-      gap: 6px;
-      padding: 12px 20px 20px;
-      background-color: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-purple);
-    }
-
-    .mobile-drawer.open {
-      display: flex;
-    }
-
-    .mobile-drawer a {
-      min-height: 46px;
-      padding: 11px 16px;
-      border-radius: var(--radius-md);
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      transition: background-color 0.15s ease, color 0.15s ease;
-    }
-
-    .mobile-drawer a:hover,
-    .mobile-drawer a:active {
-      background-color: rgba(140, 82, 255, 0.18);
-      color: var(--accent-neon);
-    }
-
-    @media (min-width: 768px) {
-      .nav-menu {
-        display: flex;
-      }
-      .hamburger-btn,
-      .mobile-drawer {
-        display: none !important;
-      }
-    }
-
-    /* =====================================================================
-       2. HERO SECTION
-       ===================================================================== */
-    .hero {
-      padding: 54px 0 74px;
-      text-align: center;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(140, 82, 255, 0.26) 0%, rgba(14, 8, 24, 0) 62%),
-        radial-gradient(circle at 82% 22%, rgba(196, 250, 40, 0.09) 0%, rgba(14, 8, 24, 0) 48%),
-        var(--bg-primary);
-    }
-
-    .hero-logo-wrap {
-      width: 118px;
-      height: 118px;
-      margin: 0 auto 24px;
-      padding: 3px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, var(--accent-neon) 0%, var(--accent-purple) 100%);
-      box-shadow:
-        0 0 24px rgba(140, 82, 255, 0.48),
-        0 0 18px rgba(196, 250, 40, 0.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hero-logo-inner {
-      width: 112px;
-      height: 112px;
-      border-radius: 16px;
-      background-color: #140A24;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hero-logo-inner img {
-      width: 112px;
-      height: 112px;
-      object-fit: cover;
-      border-radius: 16px;
-      display: block;
-    }
-
-    .hero-logo-inner svg {
-      width: 112px;
-      height: 112px;
-      display: block;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      background-color: var(--bg-secondary);
-      border: 1px solid var(--border-purple);
-      color: var(--accent-purple-soft);
-      font-size: 0.84rem;
-      font-weight: 700;
-      margin-bottom: 18px;
-    }
-
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background-color: var(--accent-neon);
-      box-shadow: 0 0 10px var(--accent-neon);
-      animation: pulseDot 1.8s infinite;
-    }
-
-    @keyframes pulseDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.45; transform: scale(0.84); }
-    }
-
-    .hero-title {
-      font-size: 2.9rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      line-height: 1.08;
-      margin-bottom: 8px;
-    }
-
-    .hero-subtitle {
-      font-size: 1.08rem;
-      font-weight: 600;
-      color: var(--accent-purple-soft);
-      letter-spacing: 0.02em;
-      margin-bottom: 18px;
-    }
-
-    .hero-desc {
-      max-width: 570px;
-      margin: 0 auto 32px;
-      font-size: 1.03rem;
-      color: var(--text-muted);
-      line-height: 1.65;
-    }
-
-    .hero-desc strong {
-      color: var(--text-main);
-    }
-
-    .hero-buttons {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      max-width: 440px;
-      margin: 0 auto;
-    }
-
-    .btn-primary {
-      width: 100%;
-      min-height: 54px;
-      padding: 14px 26px;
-      border-radius: 16px;
-      background-color: var(--accent-neon);
-      color: var(--bg-primary);
-      font-size: 1rem;
-      font-weight: 800;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: var(--shadow-neon);
-      transition: transform 0.15s ease, background-color 0.2s ease, opacity 0.2s ease;
-    }
-
-    .btn-primary:hover {
-      background-color: var(--accent-neon-hover);
-    }
-
-    .btn-primary:active {
-      transform: scale(0.98);
-    }
-
-    .btn-secondary {
-      width: 100%;
-      min-height: 52px;
-      padding: 13px 24px;
-      border-radius: 16px;
-      background-color: var(--bg-secondary);
-      color: var(--text-main);
-      border: 1.5px solid var(--border-purple);
-      font-size: 1rem;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--accent-purple);
-      background-color: var(--bg-card);
-    }
-
-    .btn-secondary:active {
-      transform: scale(0.98);
-    }
-
-    @media (min-width: 640px) {
-      .hero {
-        padding: 72px 0 88px;
-      }
-      .hero-title {
-        font-size: 3.75rem;
-      }
-      .hero-subtitle {
-        font-size: 1.22rem;
-      }
-      .hero-buttons {
-        flex-direction: row;
-        max-width: none;
-      }
-      .btn-primary,
-      .btn-secondary {
-        width: auto;
-      }
-    }
-
-    /* =====================================================================
-       SECTION UMUM
-       ===================================================================== */
-    .section {
-      padding: 68px 0;
-    }
-
-    .section-alt {
-      background-color: var(--bg-secondary);
-      border-top: 1px solid var(--border-purple);
-      border-bottom: 1px solid var(--border-purple);
-    }
-
-    .section-header {
-      text-align: center;
-      max-width: 630px;
-      margin: 0 auto 42px;
-    }
-
-    .section-pill {
-      display: inline-block;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background-color: rgba(140, 82, 255, 0.16);
-      border: 1px solid var(--border-purple);
-      color: var(--accent-neon);
-      font-size: 0.78rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 12px;
-    }
-
-    .section-title {
-      font-size: 1.9rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: var(--text-main);
-      margin-bottom: 12px;
-    }
-
-    .section-desc {
-      font-size: 0.98rem;
-      color: var(--text-muted);
-    }
-
-    /* =====================================================================
-       3. BAGIAN KEUNGGULAN & CATATAN APLIKASI (#fitur)
-       ===================================================================== */
-    .features-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-    }
-
-    @media (min-width: 640px) {
-      .features-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 22px;
-      }
-    }
-
-    .feature-card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-purple);
-      border-radius: var(--radius-lg);
-      padding: 25px;
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--accent-purple);
-    }
-
-    .feature-card.card-highlight {
-      background: linear-gradient(145deg, rgba(196, 250, 40, 0.07), var(--bg-card));
-      border-color: var(--border-neon);
-    }
-
-    .feature-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
-    }
-
-    .icon-neon {
-      background-color: rgba(196, 250, 40, 0.14);
-      color: var(--accent-neon);
-      border: 1px solid rgba(196, 250, 40, 0.28);
-    }
-
-    .icon-purple {
-      background-color: rgba(140, 82, 255, 0.18);
-      color: var(--accent-purple-soft);
-      border: 1px solid rgba(140, 82, 255, 0.34);
-    }
-
-    .feature-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 8px;
-    }
-
-    .feature-text {
-      font-size: 0.94rem;
-      color: var(--text-muted);
-      line-height: 1.62;
-    }
-
-    /* =====================================================================
-       4. BAGIAN FORM REQUEST LAGU LANGSUNG KE WHATSAPP (#request)
-       ===================================================================== */
-    .request-card {
-      max-width: 620px;
-      margin: 0 auto;
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-purple);
-      border-radius: var(--radius-xl);
-      padding: 28px 22px;
-      box-shadow: var(--shadow-purple);
-    }
-
-    @media (min-width: 640px) {
-      .request-card {
-        padding: 36px;
-      }
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 7px;
-    }
-
-    .form-label .req-star {
-      color: var(--accent-neon);
-    }
-
-    .form-input {
-      width: 100%;
-      min-height: 48px;
-      padding: 12px 15px;
-      border-radius: var(--radius-md);
-      border: 1.5px solid var(--border-purple);
-      background-color: var(--bg-input);
-      color: var(--text-main);
-      font-family: inherit;
-      font-size: 0.98rem;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .form-input::placeholder {
-      color: var(--text-dim);
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: var(--accent-neon);
-      box-shadow: 0 0 0 3px rgba(196, 250, 40, 0.14);
-    }
-
-    .privacy-note {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.84rem;
-      color: var(--text-dim);
-      margin-bottom: 20px;
-    }
-
-    .status-box {
-      display: none;
-      margin-top: 20px;
-      padding: 16px 18px;
-      border-radius: var(--radius-md);
-      font-size: 0.93rem;
-      font-weight: 600;
-      line-height: 1.55;
-      animation: fadeSlide 0.22s ease-out;
-    }
-
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .status-box.show {
-      display: flex;
-      align-items: flex-start;
-      gap: 11px;
-    }
-
-    .status-box.status-success {
-      background-color: rgba(196, 250, 40, 0.12);
-      border: 1.5px solid var(--accent-neon);
-      color: var(--accent-neon);
-    }
-
-    .status-box.status-warn {
-      background-color: rgba(255, 184, 77, 0.14);
-      border: 1.5px solid rgba(255, 184, 77, 0.55);
-      color: #FFD584;
-    }
-
-    /* =====================================================================
-       5. BAGIAN PROFIL PENGEMBANG (#tentang)
-       ===================================================================== */
-    .dev-card {
-      max-width: 780px;
-      margin: 0 auto;
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-purple);
-      border-radius: var(--radius-xl);
-      padding: 30px 22px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 24px;
-      box-shadow: var(--shadow-purple);
-    }
-
-    @media (min-width: 720px) {
-      .dev-card {
-        flex-direction: row;
-        align-items: flex-start;
-        text-align: left;
-        padding: 38px;
-        gap: 32px;
-      }
-    }
-
-    .dev-avatar {
-      width: 110px;
-      height: 110px;
-      border-radius: 26px;
-      background: linear-gradient(135deg, var(--accent-neon) 0%, var(--accent-purple) 100%);
-      padding: 3px;
-      flex-shrink: 0;
-      box-shadow: 0 12px 26px -6px rgba(140, 82, 255, 0.45);
-    }
-
-    .dev-avatar-inner {
-      width: 100%;
-      height: 100%;
-      border-radius: 23px;
-      background: linear-gradient(145deg, #21123B, #0E0818);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.25rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-    }
-
-    .dev-avatar-initials {
-      background: linear-gradient(135deg, var(--accent-neon), var(--accent-purple-soft));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .dev-role {
-      display: inline-block;
-      padding: 5px 13px;
-      border-radius: 999px;
-      background-color: rgba(196, 250, 40, 0.12);
-      border: 1px solid var(--border-neon);
-      color: var(--accent-neon);
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .dev-name {
-      font-size: 1.75rem;
-      font-weight: 900;
-      color: var(--text-main);
-      margin-bottom: 12px;
-      letter-spacing: -0.02em;
-    }
-
-    .dev-bio {
-      font-size: 0.96rem;
-      color: var(--text-muted);
-      line-height: 1.68;
-      margin-bottom: 20px;
-    }
-
-    .dev-bio strong {
-      color: var(--text-main);
-    }
-
-    .skills-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 9px;
-      margin-bottom: 24px;
-    }
-
-    @media (min-width: 720px) {
-      .skills-wrap {
-        justify-content: flex-start;
-      }
-    }
-
-    .skill-tag {
-      padding: 7px 14px;
-      border-radius: 10px;
-      background-color: var(--bg-primary);
-      border: 1px solid var(--border-purple);
-      color: var(--text-main);
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-
-    .dev-contact-row {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    @media (min-width: 720px) {
-      .dev-contact-row {
-        flex-direction: row;
-        align-items: center;
-      }
-    }
-
-    .btn-wa-contact {
-      min-height: 48px;
-      padding: 12px 22px;
-      border-radius: 14px;
-      background-color: rgba(196, 250, 40, 0.14);
-      border: 1.5px solid var(--accent-neon);
-      color: var(--accent-neon);
-      font-size: 0.95rem;
-      font-weight: 800;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
-    }
-
-    .btn-wa-contact:hover {
-      background-color: var(--accent-neon);
-      color: var(--bg-primary);
-    }
-
-    .btn-wa-contact:active {
-      transform: scale(0.98);
-    }
-
-    /* =====================================================================
-       6. FOOTER
-       ===================================================================== */
-    .footer {
-      margin-top: auto;
-      background-color: var(--bg-primary);
-      border-top: 1px solid var(--border-purple);
-      padding: 28px 20px;
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--text-dim);
-    }
-
-    .footer strong {
-      color: var(--text-main);
-    }
-
-    .footer-sub {
-      color: var(--accent-purple-soft);
-      font-size: 0.83rem;
-      margin-top: 4px;
-    }
-
-    /* =====================================================================
-       MODAL POP-UP INFO RILIS APK
-       ===================================================================== */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      background-color: rgba(8, 4, 15, 0.8);
-      backdrop-filter: blur(6px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal-overlay.open {
-      display: flex;
-    }
-
-    .modal-box {
-      width: 100%;
-      max-width: 420px;
-      background-color: var(--bg-secondary);
-      border: 1.5px solid var(--accent-purple);
-      border-radius: var(--radius-xl);
-      padding: 28px 24px;
-      text-align: center;
-      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.65);
-      animation: popScale 0.2s ease-out;
-    }
-
-    @keyframes popScale {
-      from { opacity: 0; transform: scale(0.94); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .modal-icon {
-      width: 58px;
-      height: 58px;
-      margin: 0 auto 16px;
-      border-radius: 16px;
-      background-color: rgba(196, 250, 40, 0.14);
-      border: 1px solid var(--border-neon);
-      color: var(--accent-neon);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-title {
-      font-size: 1.28rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 10px;
-    }
-
-    .modal-desc {
-      font-size: 0.94rem;
-      color: var(--text-muted);
-      line-height: 1.62;
-      margin-bottom: 22px;
-    }
-
-    .modal-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0716">
+<title>NolMusic — Nolson</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='18' y1='20' x2='82' y2='80' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23c6ff3d'/%3E%3Cstop offset='100%25' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='92' height='92' rx='24' fill='%23150c24' stroke='%238b5cf6' stroke-width='3'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%238b5cf6' stroke-opacity='.5' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='24' fill='none' stroke='%238b5cf6' stroke-opacity='.65' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%238b5cf6' fill-opacity='.55'/%3E%3Cpath d='M23 79V21L68 63V48H77V79L32 37V79H23Z' fill='%23150c24' stroke='url(%23g)' stroke-width='3.5'/%3E%3Crect x='57' y='34' width='4.5' height='13' rx='1' fill='%23c6ff3d'/%3E%3Crect x='63.5' y='29' width='4.5' height='18' rx='1' fill='%23c6ff3d'/%3E%3Crect x='70' y='21' width='4.5' height='23' rx='1' fill='%23c6ff3d'/%3E%3Crect x='76.5' y='29' width='4.5' height='18' rx='1' fill='%23c6ff3d'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.1/fonts/remixicon.css" rel="stylesheet">
+<style>
+  :root{--bg:#0d0716;--card:#170e26;--line:#2b1f40;--ink:#f3eeff;--muted:#9d8fbd;--lime:#c6ff3d;--violet:#8b5cf6;--pink:#ff4fa3;--lc1:#7a2617;--lc2:#2d0d08}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  html,body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;user-select:none}
+  input,textarea,.lyr-view,.fs-body{user-select:text}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;overflow-x:clip;line-height:1.6;transition:background .35s}
+  a{color:inherit;text-decoration:none}
+  i[class^="ri-"]{line-height:1;vertical-align:-.125em}
+  .unb{font-family:'Unbounded',sans-serif}
+  #viz{position:fixed;inset:0;z-index:-1;opacity:.55;pointer-events:none}
+  #splash{position:fixed;inset:0;z-index:99;background:var(--bg);display:grid;place-items:center;transition:opacity .45s,visibility .45s}
+  #splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+  .sp-box{text-align:center;animation:spIn .6s cubic-bezier(.2,.9,.3,1)}
+  .sp-logo{width:96px;height:96px;margin:0 auto 14px;border-radius:26px;box-shadow:0 0 44px rgba(198,255,61,.28);display:grid;place-items:center}
+  .sp-box h2{font-family:'Unbounded';font-size:1.75rem;margin:0;letter-spacing:-.02em}.sp-box span{color:var(--lime)}
+  .sp-tag{color:var(--muted);font-size:.78rem;margin-top:4px;letter-spacing:.03em}
+  @keyframes spIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0;gap:12px}
+  .brand{display:inline-flex;align-items:center;gap:10px;font-family:'Unbounded',sans-serif;font-weight:900;font-size:1.18rem;letter-spacing:-.02em}
+  .brand span{color:var(--lime)}
+  .nav-right{display:flex;align-items:center;gap:14px}
+  nav ul{display:flex;gap:24px;list-style:none;font-size:.9rem;color:var(--muted)}
+  nav ul a:hover{color:var(--lime)}
+  .set-btn{width:42px;height:42px;border-radius:15px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:1.2rem;cursor:pointer;display:grid;place-items:center;transition:.25s;flex-shrink:0;position:relative}
+  .set-btn:hover{border-color:var(--lime);color:var(--lime)}
+  .q-badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:10px;background:var(--lime);color:#111;font-size:.66rem;font-weight:800;display:none;place-items:center}
+  .q-badge.show{display:grid}
+  .hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;min-height:84vh}
+  .hero h1{font-family:'Unbounded';font-weight:900;font-size:clamp(2.4rem,8vw,7rem);line-height:.95;letter-spacing:-.03em;word-break:break-word}
+  .hero h1 span{color:var(--lime);display:inline-block}
+  .hero p.lead{color:var(--muted);max-width:440px;margin-top:14px}
+  .live-line{margin-top:18px;font-size:.95rem;font-weight:700;color:#fff;min-height:1.5em;max-width:460px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.94}
+  .player{display:flex;flex-direction:column;gap:12px;margin-top:12px;background:var(--card);border:1px solid var(--line);padding:16px 18px;border-radius:30px;width:min(460px,100%)}
+  .p-top{display:flex;align-items:center;gap:11px;width:100%}
+  .p-art{width:54px;height:54px;border-radius:14px;object-fit:cover;flex-shrink:0;border:1px solid var(--line);background:#221638;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+  .p-info{flex:1;min-width:0}
+  .p-info b{display:block;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .play{width:46px;height:46px;flex-shrink:0;border-radius:50%;border:0;background:var(--lime);color:#111;font-size:1.35rem;cursor:pointer;display:grid;place-items:center;transition:transform .2s}
+  .play:hover{transform:scale(1.06)}
+  .p-ctrls{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;padding-top:2px}
+  .cbtn{height:34px;border-radius:16px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:.92rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;transition:.2s}
+  .cbtn:hover,.cbtn.on{border-color:var(--lime);color:var(--lime)}
+  .cbtn.on{background:rgba(255,255,255,.06)}
+  .cbtn span{font-size:.68rem;font-weight:600}
+  .player small{display:block;color:var(--muted);font-size:.78rem}
+  .eq{display:flex;gap:3px;align-items:flex-end;height:20px;flex-shrink:0}
+  .eq i{width:4px;height:4px;background:var(--lime);border-radius:2px}
+  body.playing .eq i{animation:eq .8s ease-in-out infinite}
+  .eq i:nth-child(2){animation-delay:-.2s}.eq i:nth-child(3){animation-delay:-.5s}.eq i:nth-child(4){animation-delay:-.35s}
+  @keyframes eq{50%{height:22px}}
+  .p-seek{display:flex;align-items:center;gap:10px;width:100%;font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .p-seek input[type="range"],.fs-seek input[type="range"]{flex:1;-webkit-appearance:none;appearance:none;height:5px;background:rgba(255,255,255,.22);border-radius:5px;outline:none;cursor:pointer}
+  .p-seek input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:var(--lime);cursor:pointer;box-shadow:0 0 8px rgba(0,0,0,.45)}
+  .fs-seek input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;cursor:pointer}
+  .sp-lyr{margin-top:16px;background:linear-gradient(165deg,var(--lc1),var(--lc2));border-radius:26px;padding:18px 20px 20px;width:min(460px,100%);box-shadow:0 18px 44px rgba(0,0,0,.45);transition:background .6s}
+  .sp-lyr-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .sp-lyr-hd b{font-size:1.05rem;font-weight:700;color:#fff;letter-spacing:-.01em}
+  .sp-lyr-btns{display:flex;gap:8px}
+  .sp-cbtn{width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.28);color:#fff;font-size:1rem;cursor:pointer;display:grid;place-items:center;transition:transform .2s,background .2s}
+  .sp-cbtn:hover{background:rgba(0,0,0,.45);transform:scale(1.06)}
+  .lyr-view{height:230px;overflow-y:auto;scroll-behavior:smooth;padding-right:4px;font-size:1.15rem;font-weight:700;line-height:1.5;color:rgba(255,255,255,.58);white-space:pre-line;mask-image:linear-gradient(#000 82%,transparent 100%);-webkit-mask-image:linear-gradient(#000 82%,transparent 100%)}
+  .lyr-view::-webkit-scrollbar{width:0}
+  .lyr-line{padding:7px 0;transition:color .25s,transform .25s,opacity .25s;cursor:pointer}
+  .lyr-line.past{color:rgba(255,255,255,.45)}
+  .lyr-line.act{color:#fff;transform:scale(1.015);transform-origin:left center}
+  .lyr-edit{display:none;flex-direction:column;gap:10px}
+  .lyr-edit textarea{height:170px;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:12px;color:#fff;font-family:'Inter',sans-serif;font-size:.9rem;outline:none;resize:none}
+  .lyr-edit-acts{display:flex;gap:8px;justify-content:flex-end}
+  .lyr-edit-acts button{padding:7px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font-size:.82rem;cursor:pointer}
+  .lyr-edit-acts button.save{background:#fff;color:#111;border:0;font-weight:700}
+  .fs-lyr{position:fixed;inset:0;z-index:70;background:linear-gradient(175deg,var(--lc1),var(--lc2));display:flex;flex-direction:column;padding:24px 24px 28px;opacity:0;visibility:hidden;transform:translateY(24px);transition:.32s cubic-bezier(.2,.9,.3,1)}
+  .fs-lyr.open{opacity:1;visibility:visible;transform:none}
+  .fs-top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:640px;width:100%;margin:0 auto 14px}
+  .fs-meta{min-width:0;text-align:center;flex:1}.fs-meta b{display:block;font-size:1rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fs-meta small{color:rgba(255,255,255,.72);font-size:.8rem}
+  .fs-body{max-width:640px;width:100%;margin:0 auto;flex:1;overflow-y:auto;scroll-behavior:smooth;font-size:1.45rem;font-weight:700;line-height:1.55;color:rgba(255,255,255,.55);white-space:pre-line;padding:12px 0 36px}
+  .fs-body::-webkit-scrollbar{width:0}
+  .fs-bot{max-width:640px;width:100%;margin:10px auto 0;display:flex;flex-direction:column;gap:12px}
+  .fs-seek{display:flex;align-items:center;gap:10px;font-size:.75rem;color:rgba(255,255,255,.8);font-variant-numeric:tabular-nums}
+  .fs-play{width:56px;height:56px;margin:0 auto;border-radius:50%;border:0;background:#fff;color:#111;font-size:1.6rem;cursor:pointer;display:grid;place-items:center}
+  .deck{position:relative;width:min(460px,86vw);aspect-ratio:1;justify-self:center;overflow:hidden}
+  .vinyl{position:absolute;inset:6%;border-radius:50%;background:repeating-radial-gradient(circle,#111 0 2px,#1d1d1d 3px 5px);box-shadow:0 30px 80px rgba(0,0,0,.45),inset 0 0 0 2px #2a2a2a;animation:spin 2.4s linear infinite paused}
+  body.playing .vinyl{animation-play-state:running}
+  body.no-spin .vinyl{animation:none!important}
+  .vinyl::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent 0 40deg,rgba(255,255,255,.08) 50deg,transparent 70deg 210deg,rgba(255,255,255,.06) 225deg,transparent 245deg)}
+  .label{position:absolute;inset:33%;border-radius:50%;background:url('https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop') center/cover;border:6px solid var(--lime);transition:background-image .4s,border-color .35s}
+  .label::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px;border-radius:50%;background:var(--bg)}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .arm{position:absolute;right:2%;top:2%;width:42%;height:6px;background:linear-gradient(90deg,#999,#ddd);border-radius:6px;transform-origin:96% 50%;transform:rotate(-30deg);transition:transform 1s cubic-bezier(.4,1.4,.5,1);box-shadow:0 4px 10px rgba(0,0,0,.5)}
+  .arm::before{content:"";position:absolute;right:-8px;top:-9px;width:24px;height:24px;border-radius:50%;background:#bbb}
+  .arm::after{content:"";position:absolute;left:-6px;top:-6px;width:20px;height:18px;background:#ddd;border-radius:3px}
+  body.playing .arm{transform:rotate(-2deg)}
+  section{padding:80px 0}
+  h2{font-family:'Unbounded';font-size:clamp(1.9rem,4vw,3rem);margin-bottom:20px}
+  h2 em{font-style:normal;color:var(--lime)}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+  .sbox{flex:1;min-width:210px;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:11px 16px;transition:.2s}
+  .sbox:focus-within{border-color:var(--lime)}
+  .sbox i{color:var(--muted);font-size:1.1rem}
+  .sbox input{flex:1;background:transparent;border:0;outline:none;color:var(--ink);font-family:'Inter',sans-serif;font-size:.92rem}
+  .sbox input::placeholder{color:var(--muted)}
+  .ftabs{display:flex;gap:8px;flex-wrap:wrap}
+  .ftab{padding:0 15px;height:44px;border-radius:18px;border:1px solid var(--line);background:var(--card);color:var(--muted);font-family:'Inter',sans-serif;font-size:.84rem;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+  .ftab.on,.ftab.shuf-all{border-color:var(--lime);color:#111;background:var(--lime);font-weight:600}
+  .ftab.shuf-all:hover{opacity:.9}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:10px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex-shrink:0;padding:7px 14px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--muted);font-size:.8rem;font-weight:500;cursor:pointer;transition:.2s;white-space:nowrap}
+  .chip.on{border-color:var(--lime);color:var(--lime);background:rgba(255,255,255,.06);font-weight:600}
+  .tracks{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden}
+  .track{display:grid;grid-template-columns:50px 64px 1fr 120px auto;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .3s}
+  .track:last-child{border:0}.track:hover{background:rgba(255,255,255,.04)}
+  .track.on{background:linear-gradient(90deg,rgba(255,255,255,.09),transparent)}
+  .track .n{color:var(--muted);font-family:'Unbounded'}.track.on .n{color:var(--lime)}
+  .track img{width:64px;height:64px;border-radius:12px;object-fit:cover;background:#221638}
+  .track b{display:block}.track small{color:var(--muted)}
+  .track .tag{font-size:.75rem;padding:4px 10px;border:1px solid var(--line);border-radius:20px;text-align:center}
+  .acts{display:flex;align-items:center;gap:7px}
+  .fav,.pick,.qadd{background:transparent;border:1px solid var(--line);color:var(--muted);width:33px;height:33px;border-radius:50%;display:grid;place-items:center;cursor:pointer;font-size:.95rem;transition:.2s}
+  .pick:hover,.qadd:hover{border-color:var(--lime);color:var(--lime)}
+  .fav.on{border-color:var(--pink);color:var(--pink);background:rgba(255,79,163,.12)}
+  body.bundled .pick{display:none}
+  .empty{display:none;text-align:center;color:var(--muted);padding:28px;font-size:.9rem}
+  #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:var(--card);border:1px solid var(--lime);color:var(--ink);padding:9px 18px;border-radius:20px;font-size:.82rem;opacity:0;pointer-events:none;transition:.25s;z-index:95;white-space:nowrap}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  .mini{position:fixed;left:16px;right:16px;top:calc(100vh - 82px);top:calc(100svh - 82px);bottom:auto!important;max-width:540px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:10px 14px 12px;display:flex;align-items:center;gap:12px;z-index:20;box-shadow:0 8px 20px rgba(0,0,0,.45);opacity:0;visibility:hidden;pointer-events:none;overflow:hidden;transition:opacity .2s ease!important;animation:none!important}
+  .mini.show,body.playing .mini.show{opacity:1;visibility:visible;pointer-events:auto;animation:none!important}
+  .m-prog{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.08)}
+  .m-prog i{display:block;height:100%;width:0%;background:var(--lime);transition:width .25s linear}
+  .mini img{width:44px;height:44px;border-radius:12px;object-fit:cover;flex-shrink:0}
+  .m-info{flex:1;min-width:0;cursor:pointer}.m-info b{display:block;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.m-info small{display:block;font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .m-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:1.15rem;cursor:pointer;display:grid;place-items:center;flex-shrink:0}.m-btn.main{background:var(--lime);color:#111;border:0}
+  .mini *{animation:none!important;transform:none!important}
+  .set-modal{position:fixed;inset:0;z-index:80;background:#07040d;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease}
+  .set-modal.open{opacity:1;visibility:visible;pointer-events:auto}
+  .set-sheet{position:fixed;top:24px;bottom:24px;left:16px;right:16px;max-width:540px;margin:0 auto;background:var(--bg);border:1px solid var(--line);border-radius:26px;display:flex;flex-direction:column;overflow:hidden}
+  .set-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);background:var(--card);flex-shrink:0}
+  .set-hd h3{font-family:'Unbounded';font-size:1rem;display:flex;align-items:center;gap:8px}.set-hd h3 i{color:var(--lime)}
+  .set-body{padding:16px 18px 28px;flex:1;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:14px}
+  .set-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px}
+  .set-lbl{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+  .set-lbl i{color:var(--lime);font-size:.95rem}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .stat-box{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:10px 12px}
+  .stat-box b{display:block;font-family:'Unbounded';font-size:.95rem;color:var(--lime);margin-bottom:2px}
+  .stat-box span{font-size:.72rem;color:var(--muted)}
+  .wk-bars{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:78px;padding-top:14px;border-top:1px solid var(--line)}
+  .wk-col{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+  .wk-val{font-size:.62rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .wk-fill{width:100%;max-width:24px;min-height:4px;border-radius:6px;background:var(--lime);transition:height .4s}
+  .wk-day{font-size:.66rem;color:var(--muted)}
+  .th-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .th-btn{display:flex;align-items:center;gap:8px;padding:10px;border-radius:15px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--ink);font-size:.8rem;font-weight:600;cursor:pointer;text-align:left;transition:.2s}
+  .th-btn.on{border-color:var(--lime);background:rgba(255,255,255,.07)}
+  .th-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,.25)}
+  .rank-list{display:flex;flex-direction:column;gap:8px}
+  .rank-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid var(--line);cursor:pointer;transition:.2s}
+  .rank-item:hover{border-color:var(--lime)}
+  .rank-num{width:22px;font-family:'Unbounded';font-size:.78rem;color:var(--lime);text-align:center;flex-shrink:0}
+  .rank-item img{width:38px;height:38px;border-radius:10px;object-fit:cover;flex-shrink:0}
+  .rank-info{flex:1;min-width:0}.rank-info b{display:block;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rank-info small{display:block;font-size:.73rem;color:var(--muted)}
+  .rank-badge{font-size:.72rem;font-weight:700;padding:4px 9px;border-radius:12px;background:rgba(255,255,255,.06);color:var(--lime);white-space:nowrap}
+  .opt-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .opt-row:last-child{border:0;padding-bottom:0}.opt-row:first-of-type{padding-top:2px}
+  .opt-txt b{display:block;font-size:.88rem}.opt-txt small{display:block;font-size:.75rem;color:var(--muted)}
+  .tgl{width:46px;height:26px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.08);position:relative;cursor:pointer;transition:.25s;flex-shrink:0}
+  .tgl::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.25s}
+  .tgl.on{background:var(--lime);border-color:var(--lime)}.tgl.on::after{left:22px;background:#111}
+  .act-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  .s-act{padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--ink);font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:.2s}
+  .s-act:hover{border-color:var(--lime);color:var(--lime)}
+  .s-act.danger:hover{border-color:var(--pink);color:var(--pink)}
+  .card-prev{width:min(270px,72vw);border-radius:20px;display:block;margin:0 auto 12px;box-shadow:0 14px 34px rgba(0,0,0,.55);border:1px solid var(--line)}
+  .c-pick-list{display:flex;flex-direction:column;gap:6px;max-height:175px;overflow-y:auto;padding:2px}
+  .c-pick-ln{padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.83rem;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s}
+  .c-pick-ln.sel{border-color:var(--lime);color:var(--ink);background:rgba(198,255,61,.12)}
+  footer{text-align:center;color:var(--muted);padding:40px 24px 160px;font-size:.85rem}
+  .rv{opacity:0;transform:translateY(30px);transition:1s}.rv.in{opacity:1;transform:none}
+  @media(max-width:860px){nav ul{display:none}.hero{grid-template-columns:1fr}.track{grid-template-columns:30px 54px 1fr auto;gap:10px;padding:12px 14px}.track .tag{display:none}.track img{width:54px;height:54px}.th-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
 </head>
 <body>
-
-  <!-- 1. HEADER / NAVIGASI RESPONSIF -->
-  <header class="navbar">
-    <div class="container nav-inner">
-      <a href="#beranda" class="brand-link">
-        <span class="nav-logo-box" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
-            <defs>
-              <linearGradient id="navNGrad" x1="20" y1="20" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#C4FA28" />
-                <stop offset="100%" stop-color="#8C52FF" />
-              </linearGradient>
-            </defs>
-            <path d="M26 78V22L74 78V45" stroke="url(#navNGrad)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
-            <rect x="64" y="20" width="7" height="16" rx="2" fill="#C4FA28" />
-            <rect x="75" y="14" width="7" height="22" rx="2" fill="#C4FA28" />
-          </svg>
-        </span>
-        <span><span class="brand-nol">Nol</span><span class="brand-music">Music</span></span>
-      </a>
-
-      <!-- Menu Desktop -->
-      <nav class="nav-menu" aria-label="Menu Utama">
-        <a href="#fitur">Fitur</a>
-        <a href="#request">Request Lagu</a>
-        <a href="#tentang" class="nav-cta">Tentang Dev</a>
-      </nav>
-
-      <!-- Tombol Hamburger Mobile -->
-      <button type="button" id="hamburger-btn" class="hamburger-btn" aria-label="Buka Navigasi" aria-expanded="false">
-        <svg id="icon-open" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-        <svg id="icon-close" style="display:none;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C4FA28" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
+<div id="splash"><div class="sp-box"><div class="sp-logo"><svg viewBox="0 0 100 100" width="96" height="96" fill="none"><defs><linearGradient id="nmG1" x1="18" y1="20" x2="82" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="55%" stop-color="#9be15d"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient><linearGradient id="nmE1" x1="0" y1="18" x2="0" y2="52" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs><rect x="4" y="4" width="92" height="92" rx="24" fill="#150c24" stroke="#8b5cf6" stroke-width="2.5"/><circle cx="50" cy="50" r="35" stroke="#8b5cf6" stroke-opacity=".45" stroke-width="1.6"/><circle cx="50" cy="50" r="29" stroke="#8b5cf6" stroke-opacity=".55" stroke-width="1.6"/><circle cx="50" cy="50" r="23" stroke="#8b5cf6" stroke-opacity=".65" stroke-width="1.6"/><circle cx="50" cy="50" r="14" fill="#8b5cf6" fill-opacity=".55"/><path d="M23 79V21L68 63V48H77V79L32 37V79H23Z" fill="#150c24" stroke="url(#nmG1)" stroke-width="3.2"/><path d="M27.5 72V31L63 64" stroke="url(#nmG1)" stroke-width="2"/><g fill="url(#nmE1)"><rect x="57" y="34" width="4.5" height="3.2" rx=".7"/><rect x="57" y="39" width="4.5" height="3.2" rx=".7"/><rect x="57" y="44" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="44" width="4.5" height="3.2" rx=".7"/><rect x="70" y="21" width="4.5" height="3.2" rx=".7"/><rect x="70" y="26" width="4.5" height="3.2" rx=".7"/><rect x="70" y="31" width="4.5" height="3.2" rx=".7"/><rect x="70" y="36" width="4.5" height="3.2" rx=".7"/><rect x="70" y="41" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="44" width="4.5" height="3.2" rx=".7"/></g></svg></div><h2><span>Nol</span>Music</h2><p class="sp-tag">A Nolson Music Experience</p></div></div>
+<canvas id="viz"></canvas>
+<audio id="audio" preload="auto"></audio>
+<div class="wrap">
+  <nav><a class="brand" href="#"><svg viewBox="0 0 100 100" width="36" height="36" fill="none"><defs><linearGradient id="nmG2" x1="18" y1="20" x2="82" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="55%" stop-color="#9be15d"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient><linearGradient id="nmE2" x1="0" y1="18" x2="0" y2="52" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c6ff3d"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs><rect x="4" y="4" width="92" height="92" rx="24" fill="#150c24" stroke="#8b5cf6" stroke-width="2.5"/><circle cx="50" cy="50" r="35" stroke="#8b5cf6" stroke-opacity=".45" stroke-width="1.6"/><circle cx="50" cy="50" r="29" stroke="#8b5cf6" stroke-opacity=".55" stroke-width="1.6"/><circle cx="50" cy="50" r="23" stroke="#8b5cf6" stroke-opacity=".65" stroke-width="1.6"/><circle cx="50" cy="50" r="14" fill="#8b5cf6" fill-opacity=".55"/><path d="M23 79V21L68 63V48H77V79L32 37V79H23Z" fill="#150c24" stroke="url(#nmG2)" stroke-width="3.2"/><path d="M27.5 72V31L63 64" stroke="url(#nmG2)" stroke-width="2"/><g fill="url(#nmE2)"><rect x="57" y="34" width="4.5" height="3.2" rx=".7"/><rect x="57" y="39" width="4.5" height="3.2" rx=".7"/><rect x="57" y="44" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="63.5" y="44" width="4.5" height="3.2" rx=".7"/><rect x="70" y="21" width="4.5" height="3.2" rx=".7"/><rect x="70" y="26" width="4.5" height="3.2" rx=".7"/><rect x="70" y="31" width="4.5" height="3.2" rx=".7"/><rect x="70" y="36" width="4.5" height="3.2" rx=".7"/><rect x="70" y="41" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="29" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="34" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="39" width="4.5" height="3.2" rx=".7"/><rect x="76.5" y="44" width="4.5" height="3.2" rx=".7"/></g></svg><div><span>Nol</span>Music</div></a><div class="nav-right"><ul><li><a href="#rilis">Rilis</a></li></ul><button type="button" class="set-btn" id="queueOpenBtn" aria-label="Antrean Lagu" title="Antrean Lagu"><i class="ri-play-list-2-line"></i><span class="q-badge" id="qBadge">0</span></button><button type="button" class="set-btn" id="setBtn" aria-label="Pengaturan" title="Pengaturan"><i class="ri-settings-3-line"></i></button></div></nav>
+  <header class="hero">
+    <div class="rv in">
+      <p class="unb" style="color:var(--muted);font-size:.85rem;letter-spacing:.2em">Nolson</p>
+      <h1><span>Nol</span>Music</h1>
+      <p class="lead">NolMusic memadukan alunan musik dan melodi yang membuat harimu tak pernah sepi. Tekan play untuk merasakannya.</p>
+      <div class="live-line" id="liveLine"></div>
+      <div class="player" id="mainPlayer">
+        <div class="p-top">
+          <img class="p-art" id="pArt" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt="">
+          <div class="p-info"><b id="nowTitle">Dunia Yang Nanti</b><small id="nowSub">Raim Laode · Klik play untuk memutar</small></div>
+          <div class="eq"><i></i><i></i><i></i><i></i></div>
+          <button class="play" id="play" aria-label="Putar lagu"><i class="ri-play-fill"></i></button>
+        </div>
+        <div class="p-seek"><span id="curTime">0:00</span><input type="range" id="seek" min="0" max="100" value="0" step="0.1" aria-label="Geser durasi lagu"><span id="durTime">0:00</span></div>
+                <div class="p-ctrls">
+          <button class="cbtn" id="shuf" aria-label="Putar acak"><i class="ri-shuffle-line"></i></button>
+          <button class="cbtn" id="prev" aria-label="Lagu sebelumnya"><i class="ri-skip-back-fill"></i></button>
+          <button class="cbtn" id="next" aria-label="Lagu berikutnya"><i class="ri-skip-forward-fill"></i></button>
+          <button class="cbtn on" id="rep" aria-label="Ulangi lagu"><i class="ri-repeat-line"></i></button>
+          <button class="cbtn" id="spd" aria-label="Kecepatan lagu"><i class="ri-speed-up-line"></i><span id="spdTxt">1x</span></button>
+          <button class="cbtn" id="sleep" aria-label="Sleep Timer"><i class="ri-moon-line"></i><span id="sleepTxt"></span></button>
+        </div>
+      </div>
+      <div class="sp-lyr" id="lyrCard">
+        <div class="sp-lyr-hd"><b>Lirik</b><div class="sp-lyr-btns"><button type="button" class="sp-cbtn" id="lShareBtn" title="Bagikan Kartu Lirik"><i class="ri-share-forward-line"></i></button><button type="button" class="sp-cbtn" id="lResetBtn" title="Reset Cache Lirik"><i class="ri-refresh-line"></i></button><button type="button" class="sp-cbtn" id="lEditBtn" title="Edit Lirik"><i class="ri-edit-line"></i></button><button type="button" class="sp-cbtn" id="lExpBtn" title="Perbesar Lirik"><i class="ri-expand-diagonal-line"></i></button></div></div>
+        <div class="lyr-view" id="lBody">Memuat lirik lagu...</div>
+        <div class="lyr-edit" id="lEditBox"><textarea id="lInput" placeholder="Tempel atau ketik lirik lagu di sini..."></textarea><div class="lyr-edit-acts"><button type="button" id="lCancelBtn">Batal</button><button type="button" class="save" id="lSaveBtn">Simpan</button></div></div>
+      </div>
     </div>
-
-    <!-- Drawer Navigasi Mobile -->
-    <nav id="mobile-drawer" class="mobile-drawer" aria-label="Menu Mobile">
-      <a href="#fitur" class="drawer-item">Fitur &amp; Catatan</a>
-      <a href="#request" class="drawer-item">Request Lagu</a>
-      <a href="#tentang" class="drawer-item">Tentang Dev</a>
-    </nav>
+    <div class="deck rv in"><div class="vinyl"><div class="label"></div></div><div class="arm"></div></div>
   </header>
-
-  <main>
-    <!-- 2. HERO SECTION -->
-    <section id="beranda" class="hero">
-      <div class="container">
-        <!-- Logo 112x112px rounded-2xl dengan fallback otomatis ke SVG huruf N -->
-        <div class="hero-logo-wrap">
-          <div class="hero-logo-inner">
-            <img
-              src="logo.jpg"
-              alt="Logo NolMusic"
-              width="112"
-              height="112"
-              onerror="this.style.display='none'; document.getElementById('logo-svg-fallback').style.display='block';"
-            />
-            <svg id="logo-svg-fallback" style="display:none;" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo NolMusic">
-              <defs>
-                <linearGradient id="heroNGrad" x1="52" y1="44" x2="148" y2="156" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#C4FA28" />
-                  <stop offset="52%" stop-color="#A7E86B" />
-                  <stop offset="100%" stop-color="#8C52FF" />
-                </linearGradient>
-                <linearGradient id="heroEqGrad" x1="0" y1="45" x2="0" y2="95" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#C4FA28" />
-                  <stop offset="100%" stop-color="#8C52FF" stop-opacity="0.35" />
-                </linearGradient>
-              </defs>
-              <rect width="200" height="200" rx="28" fill="#140A24" />
-              <circle cx="100" cy="100" r="68" stroke="#6E3CE6" stroke-width="2" stroke-opacity="0.45" />
-              <circle cx="100" cy="100" r="56" stroke="#6E3CE6" stroke-width="2" stroke-opacity="0.58" />
-              <circle cx="100" cy="100" r="44" stroke="#8C52FF" stroke-width="2" stroke-opacity="0.7" />
-              <circle cx="100" cy="100" r="24" fill="#8C52FF" fill-opacity="0.85" />
-              <path d="M58 152V48L136 136V96" stroke="url(#heroNGrad)" stroke-width="9" stroke-linecap="square" />
-              <path d="M70 144V74L144 154V96" stroke="url(#heroNGrad)" stroke-width="7.5" stroke-linecap="square" />
-              <g fill="url(#heroEqGrad)">
-                <rect x="114" y="64" width="6" height="5" rx="1" />
-                <rect x="114" y="72" width="6" height="5" rx="1" />
-                <rect x="114" y="80" width="6" height="5" rx="1" />
-                <rect x="114" y="88" width="6" height="5" rx="1" />
-                <rect x="124" y="56" width="6" height="5" rx="1" />
-                <rect x="124" y="64" width="6" height="5" rx="1" />
-                <rect x="124" y="72" width="6" height="5" rx="1" />
-                <rect x="124" y="80" width="6" height="5" rx="1" />
-                <rect x="124" y="88" width="6" height="5" rx="1" />
-                <rect x="134" y="46" width="6" height="5" rx="1" />
-                <rect x="134" y="54" width="6" height="5" rx="1" />
-                <rect x="134" y="62" width="6" height="5" rx="1" />
-                <rect x="134" y="70" width="6" height="5" rx="1" />
-                <rect x="134" y="78" width="6" height="5" rx="1" />
-                <rect x="134" y="86" width="6" height="5" rx="1" />
-                <rect x="144" y="60" width="6" height="5" rx="1" />
-                <rect x="144" y="68" width="6" height="5" rx="1" />
-                <rect x="144" y="76" width="6" height="5" rx="1" />
-                <rect x="144" y="84" width="6" height="5" rx="1" />
-              </g>
-            </svg>
-          </div>
-        </div>
-
-        <div class="status-badge">
-          <span class="status-dot"></span>
-          <span>Dalam Pengembangan &bull; Segera Hadir (Coming Soon)</span>
-        </div>
-
-        <h1 class="hero-title">
-          <span class="brand-nol">Nol</span><span class="brand-music">Music</span>
-        </h1>
-        <p class="hero-subtitle">A Nolson Music Experience</p>
-
-        <p class="hero-desc">
-          Pemutar musik Android ringan yang dirancang untuk kenyamanan murni: <strong>100% anti iklan</strong> dan bebas diputar baik secara <strong>offline maupun online</strong>.
-        </p>
-
-        <!-- PANDUAN RILIS APK: Saat file APK sudah siap, ganti tag button di bawah ini menjadi tag a href="LINK_APK_KAMU" -->
-        <div class="hero-buttons">
-          <button type="button" id="btn-apk-soon" class="btn-primary">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span>Download APK (Segera Hadir)</span>
-          </button>
-
-          <a href="#request" class="btn-secondary">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#C4FA28" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 18V5l12-2v13"></path>
-              <circle cx="6" cy="18" r="3"></circle>
-              <circle cx="18" cy="16" r="3"></circle>
-            </svg>
-            <span>Request Lagu</span>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3. BAGIAN KEUNGGULAN & CATATAN APLIKASI -->
-    <section id="fitur" class="section section-alt">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-pill">Keunggulan &amp; Catatan</span>
-          <h2 class="section-title">Kenapa Memilih NolMusic?</h2>
-          <p class="section-desc">
-            Dibangun dengan prinsip ringan, bebas iklan, dan keterbukaan penuh mengenai perkembangan katalog lagu saat ini.
-          </p>
-        </div>
-
-        <div class="features-grid">
-          <!-- Kartu 1 -->
-          <article class="feature-card">
-            <div class="feature-icon icon-neon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
-              </svg>
-            </div>
-            <h3 class="feature-title">100% Anti Iklan</h3>
-            <p class="feature-text">
-              Nikmati musik tanpa gangguan banner, pop-up mendadak, ataupun jeda iklan di tengah pemutaran lagu.
-            </p>
-          </article>
-
-          <!-- Kartu 2 -->
-          <article class="feature-card">
-            <div class="feature-icon icon-purple">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
-                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
-                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-                <line x1="12" y1="20" x2="12.01" y2="20"></line>
-              </svg>
-            </div>
-            <h3 class="feature-title">Mode Offline &amp; Online</h3>
-            <p class="feature-text">
-              Fleksibel diputar secara offline tanpa kuota internet maupun streaming online saat jaringan tersedia.
-            </p>
-          </article>
-
-          <!-- Kartu 3 -->
-          <article class="feature-card">
-            <div class="feature-icon icon-purple">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-            </div>
-            <h3 class="feature-title">Bisa Request Lagu ke Developer</h3>
-            <p class="feature-text">
-              Lagu favoritmu belum ada? Cukup ajukan lewat formulir di bawah agar langsung ditambahkan oleh developer.
-            </p>
-          </article>
-
-          <!-- Kartu 4 -->
-          <article class="feature-card card-highlight">
-            <div class="feature-icon icon-neon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-            </div>
-            <h3 class="feature-title">Koleksi Bertahap</h3>
-            <p class="feature-text">
-              Disampaikan secara jujur: karena masih dikembangkan secara mandiri, belum semua lagu tersedia saat ini dan katalog akan terus ditambah sesuai request pengguna.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. BAGIAN FORM REQUEST LAGU LANGSUNG KE WHATSAPP DEVELOPER -->
-    <section id="request" class="section">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-pill">Request Lagu</span>
-          <h2 class="section-title">Ajukan Lagu Favoritmu</h2>
-          <p class="section-desc">
-            Isi judul lagu dan penyanyinya di bawah ini. Saat dikirim, kamu akan langsung diarahkan ke WhatsApp developer dengan format pesan yang sudah tersusun rapi.
-          </p>
-        </div>
-
-        <div class="request-card">
-          <form id="request-form" novalidate>
-            <div class="form-group">
-              <label for="sender-name" class="form-label">Nama / Panggilan (Opsional)</label>
-              <input
-                type="text"
-                id="sender-name"
-                class="form-input"
-                placeholder="Contoh: Budi"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="song-title" class="form-label">Judul Lagu <span class="req-star">*</span></label>
-              <input
-                type="text"
-                id="song-title"
-                class="form-input"
-                placeholder="Contoh: Evaluasi / Komang / Sephia"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="song-artist" class="form-label">Penyanyi / Artis <span class="req-star">*</span></label>
-              <input
-                type="text"
-                id="song-artist"
-                class="form-input"
-                placeholder="Contoh: Hindia / Raim Laode / Sheila On 7"
-                required
-              />
-            </div>
-
-            <p class="privacy-note">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4FA28" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-              </svg>
-              <span>Otomatis membuka WhatsApp dengan teks request yang siap dikirim.</span>
-            </p>
-
-            <button type="submit" id="btn-submit-request" class="btn-primary" style="width: 100%;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-              <span>Kirim Request via WhatsApp</span>
-            </button>
-          </form>
-
-          <!-- Kotak Status Hasil Pengiriman -->
-          <div id="request-status-box" class="status-box" role="status" aria-live="polite">
-            <span id="request-status-icon" style="flex-shrink:0; margin-top:2px;"></span>
-            <span id="request-status-msg"></span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. BAGIAN PROFIL PENGEMBANG -->
-    <section id="tentang" class="section section-alt">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-pill">Tentang Developer</span>
-          <h2 class="section-title">Profil Pengembang</h2>
-          <p class="section-desc">
-            Mengenal pembuat di balik logika dan kode inti NolMusic.
-          </p>
-        </div>
-
-        <div class="dev-card">
-          <div class="dev-avatar" aria-label="Inisial Rokian Adimusa">
-            <div class="dev-avatar-inner">
-              <span class="dev-avatar-initials">RA</span>
-            </div>
-          </div>
-
-          <div>
-            <span class="dev-role">Independent Android Developer</span>
-            <h3 class="dev-name">Rokian Adimusa</h3>
-            <p class="dev-bio">
-              Halo! Saya <strong>Rokian Adimusa</strong>, pengembang di balik <strong>NolMusic (A Nolson Music Experience)</strong>. Keahlian saya berfokus pada pengkodean inti (<em>core coding</em>) dan pengembangan aplikasi Android ringan yang cepat, hemat penyimpanan, serta bebas gangguan iklan.
-            </p>
-
-            <div class="skills-wrap">
-              <span class="skill-tag">Core Coding</span>
-              <span class="skill-tag">Android Dev</span>
-              <span class="skill-tag">Optimasi Ringan</span>
-              <span class="skill-tag">UI Minimalis</span>
-            </div>
-
-            <div class="dev-contact-row">
-              <a
-                href="https://wa.me/6283844162770?text=Halo%20Rokian%20Adimusa%2C%20saya%20mau%20bertanya%20tentang%20aplikasi%20NolMusic."
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-wa-contact"
-              >
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                </svg>
-                <span>Hubungi Developer via WhatsApp</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- 6. FOOTER -->
-  <footer class="footer">
-    <div class="container">
-      <p>&copy; 2026 <span class="brand-nol" style="font-weight:800;">Nol</span><strong>Music</strong> &mdash; Oleh <strong>Rokian Adimusa</strong></p>
-      <p class="footer-sub">A Nolson Music Experience</p>
+</div>
+<section id="rilis"><div class="wrap">
+  <h2 class="rv">Daftar <em>Lagu</em></h2>
+  <div class="bar rv">
+    <div class="sbox"><i class="ri-search-line"></i><input type="search" id="search" placeholder="Cari judul lagu atau penyanyi..." aria-label="Cari lagu"></div>
+    <div class="ftabs">
+      <button type="button" class="ftab shuf-all" id="shufAllBtn"><i class="ri-shuffle-line"></i> Acak Semua</button>
+      <button type="button" class="ftab on" data-f="all">Semua</button>
+      <button type="button" class="ftab" data-f="fav">Favorit</button>
     </div>
-  </footer>
-
-  <!-- MODAL INFORMASI RILIS APK -->
-  <div id="apk-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="apk-modal-title">
-    <div class="modal-box">
-      <div class="modal-icon" aria-hidden="true">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
-        </svg>
-      </div>
-      <h3 id="apk-modal-title" class="modal-title">NolMusic Segera Hadir!</h3>
-      <p class="modal-desc">
-        Aplikasi <strong>NolMusic</strong> saat ini sedang dalam tahap akhir pengembangan oleh <strong>Rokian Adimusa</strong> agar berjalan mulus, ringan, dan bebas bug saat dirilis. Sambil menunggu, kamu bisa mengirim request lagu dulu!
-      </p>
-      <div class="modal-buttons">
-        <a href="#request" id="btn-modal-request" class="btn-primary" style="width: 100%; min-height: 48px;">
-          Request Lagu Sekarang
-        </a>
-        <button type="button" id="btn-modal-close" class="btn-secondary" style="width: 100%; min-height: 46px;">
-          Tutup
-        </button>
+  </div>
+  <div class="chips rv" id="artistChips"></div>
+  < class="tracks rv" id="tracks">
+    <div class="track on" data-bpm="82" data-t="Dunia Yang Nanti" data-src="Dunia-Yang-Nanti.mp3"><span class="n">01</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Dunia Yang Nanti</b><small class="sub">Raim Laode · Album Iqro'</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="92" data-t="Bersenja Gurau" data-src="Bersenja-Gurau.mp3"><span class="n">02</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Bersenja Gurau</b><small class="sub">Raim Laode · Single</small></div><span class="tag">92 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="88" data-t="Lesung Pipi" data-src="Lesung-Pipi.mp3"><span class="n">03</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Lesung Pipi</b><small class="sub">Raim Laode · Single</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="96" data-t="Menari-Nari" data-src="Menari-Nari.mp3"><span class="n">04</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Menari-Nari</b><small class="sub">Raim Laode · Album Iqro'</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="78" data-t="Komang" data-src="Komang.mp3"><span class="n">05</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Komang</b><small class="sub">Raim Laode · Single</small></div><span class="tag">78 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="86" data-t="Iqro'" data-src="Iqro.mp3"><span class="n">06</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Iqro'</b><small class="sub">Raim Laode · Album Iqro'</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="76" data-t="Suasana Rumah" data-src="Suasana-Rumah.mp3"><span class="n">07</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Suasana Rumah</b><small class="sub">Raim Laode · Single</small></div><span class="tag">76 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="84" data-t="Sang Badut" data-src="Sang-Badut.mp3"><span class="n">08</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sang Badut</b><small class="sub">Raim Laode · Single</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="80" data-t="Babak Terakhir" data-src="Babak-Terakhir.mp3"><span class="n">09</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Babak Terakhir</b><small class="sub">Raim Laode · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="85" data-t="Ekspektasi (feat. Aruma)" data-q="Ekspektasi Raim Laode Aruma" data-src="Ekspektasi.mp3"><span class="n">10</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Ekspektasi (feat. Aruma)</b><small class="sub">Raim Laode · Single</small></div><span class="tag">85 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="75" data-t="Perih" data-src="Perih.mp3"><span class="n">11</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Perih</b><small class="sub">Vierra · Single</small></div><span class="tag">75 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="86" data-t="Dera" data-src="Dera.mp3"><span class="n">12</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Dera</b><small class="sub">Virtual Feelings · Single</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="82" data-t="Esa x Perih" data-q="Perih Esa" data-src="Esa-x-Perih.mp3"><span class="n">13</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Esa x Perih</b><small class="sub">Esa x Perih · Remix</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="94" data-t="Terjebak Imajinasi" data-src="Terjebak-Imajinasi.mp3"><span class="n">14</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Terjebak Imajinasi</b><small class="sub">Stereo Wall · Single</small></div><span class="tag">94 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="80" data-t="Tak Lagi Sama" data-src="Tak-Lagi-Sama.mp3"><span class="n">15</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Tak Lagi Sama</b><small class="sub">Virtual Feelings · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="90" data-t="Jakarta Hari Ini" data-src="Jakarta-Hari-Ini.mp3"><span class="n">16</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Jakarta Hari Ini</b><small class="sub">for Revenge · Single</small></div><span class="tag">90 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="88" data-t="Sadrah" data-src="Sadrah.mp3"><span class="n">17</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sadrah</b><small class="sub">for Revenge · Single</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="85" data-t="Serena" data-src="Serena.mp3"><span class="n">18</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Serena</b><small class="sub">for Revenge · Single</small></div><span class="tag">85 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="95" data-t="Penyangkalan" data-src="Penyangkalan.mp3"><span class="n">19</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Penyangkalan</b><small class="sub">for Revenge · Single</small></div><span class="tag">95 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="88" data-t="Tangguh" data-src="Tangguh.mp3"><span class="n">20</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Tangguh</b><small class="sub">Petra Sihombing · Single</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="92" data-t="80 km/h" data-q="80 km/h Petra Sihombing" data-src="80-km-h.mp3"><span class="n">21</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>80 km/h</b><small class="sub">Petra Sihombing · Single</small></div><span class="tag">92 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="84" data-t="Sendiri" data-src="Sendiri.mp3"><span class="n">22</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sendiri</b><small class="sub">for Revenge · Single</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="86" data-t="Tak Mengalah" data-src="Tak-Mengalah.mp3"><span class="n">23</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Tak Mengalah</b><small class="sub">for Revenge · Single</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="80" data-t="Amnesia" data-q="Amnesia Ghazali" data-src="Amnesia.mp3"><span class="n">24</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Amnesia</b><small class="sub">Ghazali · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="78" data-t="Pergilah Kekasih" data-src="Pergilah-Kekasih.mp3"><span class="n">25</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Pergilah Kekasih</b><small class="sub">Raim Laode · Single</small></div><span class="tag">78 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="90" data-t="Jadi Yang Kuinginkan" data-src="Jadi-Yang-Kuinginkan.mp3"><span class="n">26</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Jadi Yang Kuinginkan</b><small class="sub">Vierra · My First Love</small></div><span class="tag">90 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="82" data-t="Bersamamu" data-src="Bersamamu.mp3"><span class="n">27</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Bersamamu</b><small class="sub">Vierra · My First Love</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="118" data-t="Pangeran Cinta" data-src="Pangeran-Cinta.mp3"><span class="n">28</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Pangeran Cinta</b><small class="sub">Dewa 19 · Laskar Cinta</small></div><span class="tag">118 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="94" data-t="Satu" data-src="Satu.mp3"><span class="n">29</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Satu</b><small class="sub">Dewa 19 · Laskar Cinta</small></div><span class="tag">94 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="96" data-t="Mistikus Cinta" data-src="Mistikus-Cinta.mp3"><span class="n">30</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Mistikus Cinta</b><small class="sub">Dewa 19 · Bintang Lima</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="110" data-t="Separuh Napas" data-src="Separuh-Napas.mp3"><span class="n">31</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Separuh Napas</b><small class="sub">Dewa 19 · Bintang Lima</small></div><span class="tag">110 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="114" data-t="Cinta Gila" data-src="Cinta-Gila.mp3"><span class="n">32</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Cinta Gila</b><small class="sub">Dewa 19 · Atas Nama Cinta</small></div><span class="tag">114 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="84" data-t="Aku Milikmu" data-src="Aku-Milikmu.mp3"><span class="n">33</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Aku Milikmu</b><small class="sub">Dewa 19 · Format Masa Depan</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="86" data-t="Sephia" data-src="Sephia.mp3"><span class="n">34</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sephia</b><small class="sub">Sheila On 7 · Kisah Klasik</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="98" data-t="Bila Kau Tak Disampingku" data-src="Bila-Kau-Tak-Disampingku.mp3"><span class="n">35</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Bila Kau Tak Disampingku</b><small class="sub">Sheila On 7 · Kisah Klasik</small></div><span class="tag">98 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="104" data-t="Kita" data-src="Kita.mp3"><span class="n">36</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Kita</b><small class="sub">Sheila On 7 · Sheila On 7</small></div><span class="tag">104 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="112" data-t="Pemuja Rahasia" data-src="Pemuja-Rahasia.mp3"><span class="n">37</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Pemuja Rahasia</b><small class="sub">Sheila On 7 · Pejantan Tangguh</small></div><span class="tag">112 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="106" data-t="Sebuah Kisah Klasik" data-src="Sebuah-Kisah-Klasik.mp3"><span class="n">38</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sebuah Kisah Klasik</b><small class="sub">Sheila On 7 · Kisah Klasik</small></div><span class="tag">106 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="84" data-t="Hujan" data-src="Hujan.mp3"><span class="n">39</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Hujan</b><small class="sub">Utopia · Utopia</small></div><span class="tag">84 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="80" data-t="Serpihan Hati" data-src="Serpihan-Hati.mp3"><span class="n">40</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Serpihan Hati</b><small class="sub">Utopia · Indah</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="96" data-t="Baby Doll" data-src="Baby-Doll.mp3"><span class="n">41</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Baby Doll</b><small class="sub">Utopia · Indah</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="82" data-t="Selamanya" data-src="Selamanya.mp3"><span class="n">42</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Selamanya</b><small class="sub">Utopia · Utopia</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="88" data-t="Hitamku" data-src="Hitamku.mp3"><span class="n">43</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Hitamku</b><small class="sub">Andra & The Backbone · Season 2</small></div><span class="tag">88 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="94" data-t="Main Hati" data-src="Main-Hati.mp3"><span class="n">44</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Main Hati</b><small class="sub">Andra & The Backbone · Season 2</small></div><span class="tag">94 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="76" data-t="Masa Ini, Nanti, dan Indah Lainnya" data-q="Masa Ini Nanti dan Indah Lainnya Nuca" data-src="Masa-Ini-Nanti-dan-Indah-Lainnya.mp3"><span class="n">45</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Masa Ini, Nanti, dan Indah Lainnya</b><small class="sub">Nuca · Single</small></div><span class="tag">76 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="78" data-t="Kembali Kecil" data-src="Kembali-Kecil.mp3"><span class="n">46</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Kembali Kecil</b><small class="sub">Nuca · Single</small></div><span class="tag">78 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="80" data-t="Mengenal Lebih Jauh" data-src="Mengenal-Lebih-Jauh.mp3"><span class="n">47</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Mengenal Lebih Jauh</b><small class="sub">Nuca · Single</small></div><span class="tag">80 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="75" data-t="Sampai Kita Tua" data-src="Sampai-Kita-Tua.mp3"><span class="n">48</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sampai Kita Tua</b><small class="sub">Nuca · Single</small></div><span class="tag">75 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="86" data-t="Sang Ratu" data-src="Sang-Ratu.mp3"><span class="n">49</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Sang Ratu</b><small class="sub">Nuca · Single</small></div><span class="tag">86 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="74" data-t="I'd Like to Watch You Sleeping" data-q="I'd Like to Watch You Sleeping Sal Priadi" data-src="Id-Like-to-Watch-You-Sleeping.mp3"><span class="n">50</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>I'd Like to Watch You Sleeping</b><small class="sub">Sal Priadi · Berhati</small></div><span class="tag">74 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="76" data-t="Kita Usahakan Rumah Itu" data-src="Kita-Usahakan-Rumah-Itu.mp3"><span class="n">51</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Kita Usahakan Rumah Itu</b><small class="sub">Sal Priadi · MARKERS AND SUCH PENS FLASHDISKS</small></div><span class="tag">76 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="72" data-t="Ocean Eyes" data-q="Ocean Eyes Billie Eilish" data-src="Ocean-Eyes.mp3"><span class="n">52</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Ocean Eyes</b><small class="sub">Billie Eilish · Don't Smile at Me</small></div><span class="tag">72 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="74" data-t="WILDFLOWER" data-q="WILDFLOWER Billie Eilish" data-src="WILDFLOWER.mp3"><span class="n">53</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>WILDFLOWER</b><small class="sub">Billie Eilish · HIT ME HARD AND SOFT</small></div><span class="tag">74 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="105" data-t="BIRDS OF A FEATHER" data-q="BIRDS OF A FEATHER Billie Eilish" data-src="BIRDS-OF-A-FEATHER.mp3"><span class="n">54</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>BIRDS OF A FEATHER</b><small class="sub">Billie Eilish · HIT ME HARD AND SOFT</small></div><span class="tag">105 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="118" data-t="Evakuasi" data-src="Evakuasi.mp3"><span class="n">55</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Evakuasi</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">118 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="85" data-t="Wejangan Mama" data-src="Wejangan-Mama.mp3"><span class="n">56</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Wejangan Mama</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">85 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="92" data-t="Besok Mungkin Kita Sampai" data-src="Besok-Mungkin-Kita-Sampai.mp3"><span class="n">57</span><img src="https://images.pexels.com/photos/2499790/pexels-photo-2499790.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Besok Mungkin Kita Sampai</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">92 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="96" data-t="Jam Makan Siang (feat. Matter Mos)" data-q="Jam Makan Siang Hindia Matter Mos" data-src="Jam-Makan-Siang.mp3"><span class="n">58</span><img src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Jam Makan Siang (feat. Matter Mos)</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">96 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="104" data-t="Dehidrasi (feat. Petra Sihombing)" data-q="Dehidrasi Hindia Petra Sihombing" data-src="Dehidrasi.mp3"><span class="n">59</span><img src="https://images.pexels.com/photos/37805584/pexels-photo-37805584.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Dehidrasi (feat. Petra Sihombing)</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">104 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="track" data-bpm="82" data-t="Untuk Apa / Untuk Apa?" data-q="Untuk Apa Hindia" data-src="Untuk-Apa.mp3"><span class="n">60</span><img src="https://images.pexels.com/photos/28122495/pexels-photo-28122495.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt=""><div><b>Untuk Apa / Untuk Apa?</b><small class="sub">Hindia · Menari dengan Bayangan</small></div><span class="tag">82 BPM</span><div class="acts"><button type="button" class="qadd" title="Putar Berikutnya"><i class="ri-play-list-add-line"></i></button><button type="button" class="fav" title="Favorit"><i class="ri-heart-line"></i></button><button type="button" class="pick" title="Pilih MP3 dari HP"><i class="ri-folder-add-line"></i></button><i class="ri-play-circle-line" style="font-size:1.55rem"></i></div><input type="file" accept="audio/*" multiple hidden></div>
+    <div class="empty" id="noResult">Belum ada lagu di daftar ini.</div>
+  </div>
+</div></section>
+<div class="fs-lyr" id="fsLyr">
+  <div class="fs-top"><div style="width:34px"></div><div class="fs-meta"><b id="fsTitle">Dunia Yang Nanti</b><small id="fsSub">Raim Laode</small></div><button type="button" class="sp-cbtn" id="fsClose" title="Perkecil"><i class="ri-collapse-diagonal-line"></i></button></div>
+  <div class="fs-body" id="fsBody"></div>
+  <div class="fs-bot"><div class="fs-seek"><span id="fsCur">0:00</span><input type="range" id="fsSeek" min="0" max="100" value="0" step="0.1"><span id="fsDur">0:00</span></div><button type="button" class="fs-play" id="fsPlay"><i class="ri-play-fill"></i></button></div>
+</div>
+<div class="mini" id="mini">
+  <img id="mImg" src="https://images.pexels.com/photos/14976666/pexels-photo-14976666.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&fit=crop" alt="">
+  <div class="m-info" id="mJump"><b id="mTitle">Dunia Yang Nanti</b><small id="mSub">Raim Laode</small></div>
+  <button type="button" class="m-btn main" id="mPlay" aria-label="Putar atau jeda"><i class="ri-play-fill"></i></button>
+  <button type="button" class="m-btn" id="mNext" aria-label="Lagu berikutnya"><i class="ri-skip-forward-fill"></i></button>
+  <div class="m-prog"><i id="mProg"></i></div>
+</div>
+</div>
+<div class="set-modal" id="qModal">
+  <div class="set-sheet">
+    <div class="set-hd"><h3><i class="ri-play-list-2-fill"></i> Antrean Lagu</h3><button type="button" class="sp-cbtn" id="qClose" title="Tutup"><i class="ri-close-line"></i></button></div>
+    <div class="set-body">
+      <div class="set-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="set-lbl" style="margin:0"><i class="ri-list-ordered"></i> Putar Berikutnya</div><button type="button" class="s-act danger" id="qClear" style="padding:6px 12px;font-size:.74rem">Kosongkan</button></div>
+        <div class="rank-list" id="qList"></div>
       </div>
     </div>
   </div>
-
-  <!-- SCRIPT INTERNAL (VANILLA JS + DIRECT WHATSAPP REDIRECT) -->
-  <script>
-    (function () {
-      const WA_NUMBER = "6283844162770";
-
-      function initApp() {
-        try {
-          // 1. Toggle Menu Hamburger Mobile
-          const hamburgerBtn = document.getElementById("hamburger-btn");
-          const mobileDrawer = document.getElementById("mobile-drawer");
-          const iconOpen = document.getElementById("icon-open");
-          const iconClose = document.getElementById("icon-close");
-          const drawerItems = document.querySelectorAll(".drawer-item");
-
-          function setMenuState(isOpen) {
-            if (!mobileDrawer) return;
-            if (isOpen) {
-              mobileDrawer.classList.add("open");
-              if (iconOpen) iconOpen.style.display = "none";
-              if (iconClose) iconClose.style.display = "block";
-              if (hamburgerBtn) hamburgerBtn.setAttribute("aria-expanded", "true");
-            } else {
-              mobileDrawer.classList.remove("open");
-              if (iconOpen) iconOpen.style.display = "block";
-              if (iconClose) iconClose.style.display = "none";
-              if (hamburgerBtn) hamburgerBtn.setAttribute("aria-expanded", "false");
-            }
-          }
-
-          if (hamburgerBtn) {
-            hamburgerBtn.addEventListener("click", function () {
-              const currentlyOpen = mobileDrawer && mobileDrawer.classList.contains("open");
-              setMenuState(!currentlyOpen);
-            });
-          }
-
-          drawerItems.forEach(function (item) {
-            item.addEventListener("click", function () {
-              setMenuState(false);
-            });
-          });
-
-          // 2. Modal Informasi Rilis APK
-          const btnApkSoon = document.getElementById("btn-apk-soon");
-          const apkModal = document.getElementById("apk-modal");
-          const btnModalClose = document.getElementById("btn-modal-close");
-          const btnModalRequest = document.getElementById("btn-modal-request");
-
-          function openModal() {
-            if (apkModal) apkModal.classList.add("open");
-          }
-
-          function closeModal() {
-            if (apkModal) apkModal.classList.remove("open");
-          }
-
-          if (btnApkSoon) btnApkSoon.addEventListener("click", openModal);
-          if (btnModalClose) btnModalClose.addEventListener("click", closeModal);
-          if (btnModalRequest) btnModalRequest.addEventListener("click", closeModal);
-          if (apkModal) {
-            apkModal.addEventListener("click", function (event) {
-              if (event.target === apkModal) closeModal();
-            });
-          }
-
-          // 3. Pengiriman Form Request Lagu ke WhatsApp (wa.me)
-          const requestForm = document.getElementById("request-form");
-          const inputName = document.getElementById("sender-name");
-          const inputTitle = document.getElementById("song-title");
-          const inputArtist = document.getElementById("song-artist");
-          const statusBox = document.getElementById("request-status-box");
-          const statusIcon = document.getElementById("request-status-icon");
-          const statusMsg = document.getElementById("request-status-msg");
-
-          function showStatus(type, message) {
-            if (!statusBox || !statusMsg || !statusIcon) return;
-            statusBox.className = "status-box show " + type;
-
-            if (type === "status-success") {
-              statusIcon.innerHTML =
-                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C4FA28" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-            } else {
-              statusIcon.innerHTML =
-                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD584" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-            }
-
-            statusMsg.textContent = message;
-          }
-
-          if (requestForm) {
-            requestForm.addEventListener("submit", function (event) {
-              event.preventDefault();
-
-              const senderName = inputName ? inputName.value.trim() : "";
-              const title = inputTitle ? inputTitle.value.trim() : "";
-              const artist = inputArtist ? inputArtist.value.trim() : "";
-
-              if (!title || !artist) {
-                showStatus("status-warn", "Harap isi Judul Lagu dan Penyanyi / Artis terlebih dahulu.");
-                return;
-              }
-
-              const waMessage =
-                "Halo Rokian, saya mau request lagu untuk *NolMusic*:\n\n" +
-                (senderName ? "• Nama: " + senderName + "\n" : "") +
-                "• Judul Lagu: " + title + "\n" +
-                "• Penyanyi / Artis: " + artist + "\n\n" +
-                "Terima kasih!";
-
-              const waUrl = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(waMessage);
-
-              showStatus(
-                "status-success",
-                "Mengarahkan ke WhatsApp untuk mengirim request \"" + title + " - " + artist + "\"..."
-              );
-
-              window.location.href = waUrl;
-            });
-          }
-        } catch (err) {
-          console.error("Kesalahan pada aplikasi halaman NolMusic:", err);
-        }
+</div>
+<div class="set-modal" id="cardModal">
+  <div class="set-sheet">
+    <div class="set-hd"><h3><i class="ri-image-2-fill"></i> Kartu Lirik</h3><button type="button" class="sp-cbtn" id="cardClose" title="Tutup"><i class="ri-close-line"></i></button></div>
+    <div class="set-body">
+      <canvas id="cardCanvas" class="card-prev" width="600" height="760"></canvas>
+      <div class="set-card">
+        <div class="set-lbl"><i class="ri-checkbox-multiple-line"></i> Ketuk 1–4 Baris Lirik</div>
+        <div class="c-pick-list" id="cardLines"></div>
+        <div class="act-row" style="margin-top:12px">
+          <button type="button" class="s-act" id="cardStyle"><i class="ri-contrast-drop-2-line"></i> Ganti Warna Kartu</button>
+          <button type="button" class="s-act" id="cardSave"><i class="ri-download-2-line"></i> Simpan Gambar</button>
+        </div>
+        <button type="button" class="s-act" id="cardShare" style="width:100%;margin-top:8px;background:var(--lime);color:#111;border:0"><i class="ri-share-line"></i> Bagikan ke WhatsApp / Story</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="set-modal" id="setModal">
+  <div class="set-sheet">
+    <div class="set-hd"><h3><i class="ri-settings-3-fill"></i> Pengaturan</h3><button type="button" class="sp-cbtn" id="setClose" title="Tutup"><i class="ri-close-line"></i></button></div>
+    <div class="set-body">
+      <div class="set-card">
+        <div class="set-lbl"><i class="ri-time-line"></i> Waktu Mendengarkan</div>
+        <div class="stat-grid">
+          <div class="stat-box"><b id="stToday">0 mnt</b><span>Hari Ini</span></div>
+          <div class="stat-box"><b id="stTotal">0 mnt</b><span>Total Semua</span></div>
+          <div class="stat-box"><b id="stPlays">0x</b><span>Total Diputar</span></div>
+        </div>
+        <div class="wk-bars" id="stWeek"></div>
+      </div>
+      <div class="set-card">
+        <div class="set-lbl"><i class="ri-palette-line"></i> Ubah Tema Aplikasi</div>
+        <div class="th-grid" id="themeGrid"></div>
+      </div>
+      <div class="set-card">
+        <div class="set-lbl"><i class="ri-fire-line"></i> Lagu Sering Diputar</div>
+        <div class="rank-list" id="topTracks"></div>
+      </div>
+      <div class="set-card">
+        <div class="set-lbl"><i class="ri-user-star-line"></i> Artis Sering Diputar</div>
+        <div class="rank-list" id="topArtists"></div>
+      </div>
+      <div class="set-card">
+        <div class="set-lbl"><i class="ri-sliders-line"></i> Preferensi & Data</div>
+        <div class="opt-row"><div class="opt-txt"><b>Animasi Equalizer Latar</b><small>Matikan untuk menghemat baterai HP</small></div><button type="button" class="tgl on" id="optViz" aria-label="Toggle Equalizer"></button></div>
+        <div class="opt-row"><div class="opt-txt"><b>Putar Piringan Hitam</b><small>Animasi piringan vinyl saat lagu diputar</small></div><button type="button" class="tgl on" id="optVinyl" aria-label="Toggle Piringan"></button></div>
+        <div class="opt-row"><div class="opt-txt"><b>Ingat Lagu Terakhir</b><small>Simpan posisi lagu terakhir saat ditutup</small></div><button type="button" class="tgl on" id="optResume" aria-label="Toggle Ingat Lagu"></button></div>
+        <div class="act-row">
+          <button type="button" class="s-act" id="btnResetLyr"><i class="ri-refresh-line"></i> Reset Cache Lirik</button>
+          <button type="button" class="s-act danger" id="btnResetStats"><i class="ri-delete-bin-line"></i> Reset Statistik</button>
+        </div>
+        <p style="font-size:.73rem;color:var(--muted);text-align:center;margin-top:12px">NolMusic v1.2 · 51 Lagu · Dibuat oleh Nolson</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<footer>© 2026 NolMusic · Nolson</footer>
+<script>
+setTimeout(()=>document.getElementById('splash').classList.add('hide'),1100);
+if(!localStorage.getItem('nolApkClean_v2')){['nolLyrics','nolLyrics2','nolLyrics3','nolLast','nolArt','nolFavs'].forEach(k=>localStorage.removeItem(k));try{indexedDB.deleteDatabase('MusicRandomDB');}catch(e){}localStorage.setItem('nolApkClean_v2','1');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2000);}
+const anyModalOpen=()=>['setModal','qModal','cardModal'].some(id=>document.getElementById(id).classList.contains('open'));
+let lastBack=0;history.pushState({nol:1},'');
+addEventListener('popstate',()=>{
+  for(const id of ['cardModal','qModal','setModal']){const m=document.getElementById(id);if(m.classList.contains('open')){m.classList.remove('open');history.pushState({nol:1},'');return;}}
+  const fs=document.getElementById('fsLyr'),eb=document.getElementById('lEditBox');
+  if(fs.classList.contains('open')){fs.classList.remove('open');history.pushState({nol:1},'');return;}
+  if(eb.style.display==='flex'){eb.style.display='none';document.getElementById('lBody').style.display='block';history.pushState({nol:1},'');return;}
+  if(Date.now()-lastBack<2000){history.back();return;}
+  lastBack=Date.now();history.pushState({nol:1},'');showToast('Tekan sekali lagi untuk keluar');
+});
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cv=document.getElementById('viz'),ctx=cv.getContext('2d');function size(){cv.width=innerWidth;cv.height=innerHeight;}size();addEventListener('resize',size);
+const prefs=Object.assign({viz:true,vinyl:true,resume:true},JSON.parse(localStorage.getItem('nolPrefs')||'{}'));
+function savePrefs(){try{localStorage.setItem('nolPrefs',JSON.stringify(prefs));}catch(e){}}
+function applyPrefs(){
+  cv.style.display=prefs.viz?'block':'none';
+  document.body.classList.toggle('no-spin',!prefs.vinyl);
+  document.getElementById('optViz').classList.toggle('on',prefs.viz);
+  document.getElementById('optVinyl').classList.toggle('on',prefs.vinyl);
+  document.getElementById('optResume').classList.toggle('on',prefs.resume);
+}
+const themes=[
+  {id:'lime',name:'Neon Limau',bg:'#0d0716',card:'#170e26',line:'#2b1f40',lime:'#c6ff3d',violet:'#8b5cf6',muted:'#9d8fbd'},
+  {id:'ocean',name:'Samudra Biru',bg:'#06111c',card:'#0d1f33',line:'#1b3654',lime:'#38bdf8',violet:'#0284c7',muted:'#89a8c7'},
+  {id:'rose',name:'Mawar Velvet',bg:'#170811',card:'#26101d',line:'#421c33',lime:'#ff4fa3',violet:'#db2777',muted:'#c293ab'},
+  {id:'amber',name:'Emas Senja',bg:'#140e06',card:'#241a0d',line:'#3f2e18',lime:'#fbbf24',violet:'#d97706',muted:'#bfa98a'},
+  {id:'emerald',name:'Zamrud Malam',bg:'#06140e',card:'#0e241b',line:'#1b4232',lime:'#34d399',violet:'#059669',muted:'#8ebaa8'},
+  {id:'mono',name:'Monokrom',bg:'#0b0b0e',card:'#16161c',line:'#2a2a35',lime:'#f4f4f5',violet:'#71717a',muted:'#9e9ea9'}
+];
+let curTheme=localStorage.getItem('nolTheme')||'lime';
+function applyTheme(id){
+  const th=themes.find(x=>x.id===id)||themes[0];curTheme=th.id;
+  const r=document.documentElement.style;
+  r.setProperty('--bg',th.bg);r.setProperty('--card',th.card);r.setProperty('--line',th.line);
+  r.setProperty('--lime',th.lime);r.setProperty('--violet',th.violet);r.setProperty('--muted',th.muted);
+  const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=th.bg;
+  try{localStorage.setItem('nolTheme',th.id);}catch(e){}
+  document.querySelectorAll('.th-btn').forEach(b=>b.classList.toggle('on',b.dataset.th===th.id));
+}
+document.getElementById('themeGrid').innerHTML=themes.map(t=>`<button type="button" class="th-btn" data-th="${t.id}"><span class="th-dot" style="background:${t.lime}"></span><span>${t.name}</span></button>`).join('');
+document.querySelectorAll('.th-btn').forEach(b=>b.onclick=()=>{applyTheme(b.dataset.th);showToast('Tema: '+b.textContent.trim());});
+applyTheme(curTheme);applyPrefs();
+const audio=document.getElementById('audio'),seek=document.getElementById('seek'),fsSeek=document.getElementById('fsSeek');
+const curTimeEl=document.getElementById('curTime'),durTimeEl=document.getElementById('durTime'),fsCurEl=document.getElementById('fsCur'),fsDurEl=document.getElementById('fsDur');
+const tracks=[...document.querySelectorAll('.track')];
+const getArtist=tr=>tr.dataset.artist||(tr.dataset.artist=tr.querySelector('.sub').textContent.split('·')[0].trim());
+const lastState=prefs.resume?JSON.parse(localStorage.getItem('nolLast')||'null'):null;
+let AC,analyser,data,timer,playing=false,synthMode=false,shuffle=false,repMode='all',bpm=82,curIdx=lastState&&tracks[lastState.idx]?lastState.idx:0,resumeTime=lastState?+lastState.time||0:0,step=0,filterMode='all',artistFilter='all',speedIdx=0,sleepMins=0,sleepEnd=0,lastSaveTs=0,syncedLines=[],lastActLine=-1,plainMode=false,countedIdx=-1,playQueue=[];
+const fmt=s=>!isFinite(s)||s<0?'0:00':Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+function paintSeek(){
+  const pct=Math.min(100,Math.max(0,((+seek.value||0)/(+seek.max||100))*100));
+  seek.style.background=`linear-gradient(90deg,var(--lime) ${pct}%,var(--line) ${pct}%)`;
+  fsSeek.style.background=`linear-gradient(90deg,#fff ${pct}%,rgba(255,255,255,.25) ${pct}%)`;
+  document.getElementById('mProg').style.width=pct+'%';
+}
+function saveLastState(){if(!prefs.resume)return;try{localStorage.setItem('nolLast',JSON.stringify({idx:curIdx,time:isFinite(audio.currentTime)?audio.currentTime:0}));}catch(e){}}
+function syncMediaPosition(){
+  if(!('mediaSession' in navigator)||!isFinite(audio.duration)||audio.duration<=0)return;
+  try{navigator.mediaSession.setPositionState({duration:audio.duration,playbackRate:audio.playbackRate||1,position:Math.min(audio.currentTime,audio.duration)});}catch(e){}
+}
+function updateMediaSession(){
+  if(!('mediaSession' in navigator))return;
+  const tr=tracks[curIdx],art=tr.querySelector('img').src;
+  navigator.mediaSession.metadata=new MediaMetadata({title:tr.dataset.t,artist:getArtist(tr),album:'NolMusic',artwork:[{src:art,sizes:'300x300',type:'image/jpeg'}]});
+  navigator.mediaSession.playbackState=playing?'playing':'paused';
+}
+if('mediaSession' in navigator){
+  const act=(n,fn)=>{try{navigator.mediaSession.setActionHandler(n,fn);}catch(e){}};
+  act('play',()=>play());act('pause',()=>stop());act('previoustrack',()=>loadTrack(curIdx-1,true));act('nexttrack',()=>nextTrack());
+  act('seekto',d=>{if(d.seekTime!=null&&isFinite(audio.duration)){audio.currentTime=d.seekTime;syncMediaPosition();}});
+}
+const palettes=[['#7a2617','#2d0d08'],['#1e4d5c','#0b2028'],['#4c2875','#1c0e2e'],['#6e3b18','#291507'],['#1f543d','#0b2218'],['#6b1d3a','#290a16'],['#2b3e6e','#10182d']];
+function applyCoverTheme(url,idx){
+  const setP=(c1,c2)=>{document.documentElement.style.setProperty('--lc1',c1);document.documentElement.style.setProperty('--lc2',c2);};
+  const fb=palettes[idx%palettes.length];setP(fb[0],fb[1]);
+  const im=new Image();im.crossOrigin='anonymous';
+  im.onload=()=>{try{const c=document.createElement('canvas');c.width=c.height=12;const g=c.getContext('2d');g.drawImage(im,0,0,12,12);const d=g.getImageData(0,0,12,12).data;let r=0,gr=0,b=0,n=0;for(let i=0;i<d.length;i+=4){if(d[i]+d[i+1]+d[i+2]>45){r+=d[i];gr+=d[i+1];b+=d[i+2];n++;}}if(n){r=Math.min(155,Math.max(45,Math.round(r/n*.75)));gr=Math.min(130,Math.max(25,Math.round(gr/n*.75)));b=Math.min(155,Math.max(30,Math.round(b/n*.75)));setP(`rgb(${r},${gr},${b})`,`rgb(${Math.round(r*.38)},${Math.round(gr*.38)},${Math.round(b*.38)})`);}}catch(e){}};
+  im.src=url;
+}
+function syncLyricsTime(force){
+  if(!syncedLines.length)return;let idx=-1;
+  if(plainMode){
+    const dur=isFinite(audio.duration)&&audio.duration>0?audio.duration:0;
+    idx=dur?Math.min(syncedLines.length-1,Math.floor((audio.currentTime/dur)*syncedLines.length)):0;
+  }else{
+    const t=audio.currentTime+0.25;
+    for(let i=0;i<syncedLines.length;i++){if(t>=syncedLines[i].t)idx=i;else break;}
+  }
+  if(idx!==lastActLine||force){
+    lastActLine=idx;document.getElementById('liveLine').textContent=idx>=0?syncedLines[idx].txt:(syncedLines[0]?syncedLines[0].txt:'');
+    ['lBody','fsBody'].forEach(id=>{const box=document.getElementById(id),els=box.querySelectorAll('.lyr-line');els.forEach((el,i)=>{el.classList.toggle('act',i===idx);el.classList.toggle('past',idx>=0&&i<idx);});if(idx>=0&&els[idx])box.scrollTop=els[idx].offsetTop-box.offsetTop-box.clientHeight/2+els[idx].clientHeight/2;});
+  }
+}
+audio.addEventListener('loadedmetadata',()=>{seek.max=fsSeek.max=audio.duration||100;durTimeEl.textContent=fsDurEl.textContent=fmt(audio.duration);paintSeek();syncMediaPosition();});
+audio.addEventListener('timeupdate',()=>{
+  if(!isFinite(audio.duration)||anyModalOpen())return;
+  seek.max=fsSeek.max=audio.duration;seek.value=fsSeek.value=audio.currentTime;curTimeEl.textContent=fsCurEl.textContent=fmt(audio.currentTime);durTimeEl.textContent=fsDurEl.textContent=fmt(audio.duration);paintSeek();syncMediaPosition();syncLyricsTime();
+  if(Date.now()-lastSaveTs>2000){lastSaveTs=Date.now();saveLastState();}
+});
+seek.oninput=fsSeek.oninput=function(){const v=+this.value;seek.value=fsSeek.value=v;curTimeEl.textContent=fsCurEl.textContent=fmt(v);paintSeek();if(isFinite(audio.duration)){audio.currentTime=v;saveLastState();syncMediaPosition();syncLyricsTime(true);}};
+const artCache=JSON.parse(localStorage.getItem('nolArt')||'{}');
+function setCover(tr,url,idx){
+  if(!url)return;tr.querySelector('img').src=url;
+  if(idx===curIdx){document.getElementById('pArt').src=document.getElementById('mImg').src=url;document.querySelector('.label').style.backgroundImage=`url('${url}')`;applyCoverTheme(url,idx);updateMediaSession();}
+}
+async function extractID3Art(blob){
+  try{
+    const u=new Uint8Array(await blob.slice(0,300000).arrayBuffer());if(u[0]!==73||u[1]!==68||u[2]!==51)return null;
+    const ver=u[3],tagSize=((u[6]&127)<<21)|((u[7]&127)<<14)|((u[8]&127)<<7)|(u[9]&127);let p=10,end=Math.min(u.length,tagSize+10);
+    if(u[5]&64)p+=((u[10]&127)<<21)|((u[11]&127)<<14)|((u[12]&127)<<7)|(u[13]&127);
+    while(p+10<end){
+      const id=String.fromCharCode(u[p],u[p+1],u[p+2],u[p+3]);
+      const sz=ver===4?(((u[p+4]&127)<<21)|((u[p+5]&127)<<14)|((u[p+6]&127)<<7)|(u[p+7]&127)):((u[p+4]<<24)|(u[p+5]<<16)|(u[p+6]<<8)|u[p+7]);
+      if(sz<=0||p+10+sz>end)break;
+      if(id==='APIC'){
+        let q=p+10;const enc=u[q++];let mime='';while(q<p+10+sz&&u[q]!==0)mime+=String.fromCharCode(u[q++]);q+=2;
+        if(enc===1||enc===2){while(q+1<p+10+sz&&!(u[q]===0&&u[q+1]===0))q+=2;q+=2;}else{while(q<p+10+sz&&u[q]!==0)q++;q++;}
+        if(q<p+10+sz)return URL.createObjectURL(new Blob([u.slice(q,p+10+sz)],{type:mime||'image/jpeg'}));
       }
+      p+=10+sz;
+    }
+  }catch(e){}
+  return null;
+}
+function fetchCoverJSONP(tr,i){
+  const key=tr.dataset.src,cb='_nolCb'+i+'_'+Date.now(),q=encodeURIComponent(tr.dataset.q||(tr.dataset.t+' '+getArtist(tr))),sc=document.createElement('script');
+  window[cb]=j=>{delete window[cb];sc.remove();const hit=j&&j.results&&j.results[0];if(hit&&hit.artworkUrl100){const url=hit.artworkUrl100.replace('100x100','300x300');artCache[key]=url;try{localStorage.setItem('nolArt',JSON.stringify(artCache));}catch(e){}if(!tr.dataset.id3art&&!tr.dataset.localart)setCover(tr,url,i);}};
+  sc.onerror=()=>{delete window[cb];sc.remove();};sc.src=`https://itunes.apple.com/search?term=${q}&entity=song&country=ID&limit=1&callback=${cb}`;document.body.appendChild(sc);
+}
+function loadOfficialCovers(){
+  tracks.forEach((tr,i)=>{
+    const key=tr.dataset.src,localJpg=key.replace(/\.mp3$/i,'.jpg'),im=new Image();
+    im.onload=()=>{tr.dataset.localart='1';setCover(tr,localJpg,i);};
+    im.onerror=()=>{if(artCache[key]&&!tr.dataset.id3art)setCover(tr,artCache[key],i);else fetchCoverJSONP(tr,i);};
+    im.src=localJpg;
+  });
+    }
+  const OFFLINE_LYRICS={
+  'Dunia-Yang-Nanti.mp3':'Tenang saja semua kan baik-baik saja\nLangit selalu punya cara menjaga\nLangkah kecil kita hari ini\nAkan terjawab di dunia yang nanti',
+  'Bersenja-Gurau.mp3':'Mari duduk sebentar bersenja gurau\nMelepas penat yang seharian kacau\nTawa kecilmu obat paling manjur\nSaat dunia terasa begitu kabur',
+  'Lesung-Pipi.mp3':'Senyummu manis dengan lesung pipi\nMembuat malamku tak lagi sepi\nTak perlu janji yang terlalu tinggi\nCukup kau ada di sisi setiap hari',
+  'Menari-Nari.mp3':'Menari-nari tawamu kembali\nMengisi hari yang ramai\nMeski mendung selalu tertulis di statusmu\nSenyumanmu masih tetap paling kusuka',
+  'Komang.mp3':'Sebab kau terlalu indah dari sekadar kata\nDunia berhenti sejenak menikmati indahmu\nDan apabila tak bersamamu\nKu pastikan ku jalani dunia tak seindah kemarin',
+  'Iqro.mp3':'Bacalah tanda yang semesta titipkan\nDi setiap sabar yang kau perjuangkan\nTak ada doa yang pulang hampa\nSemua bermuara pada waktunya',
+  'Suasana-Rumah.mp3':'Sejauh apa pun kaki melangkah\nPulang adalah arah paling ramah\nSuasana rumah di dalam pelukmu\nSelalu menjadi tempat kembaliku',
+  'Sang-Badut.mp3':'Di balik tawa yang selalu kubagi\nAda sunyi yang kusimpan sendiri\nBiarlah aku menjadi penghiburmu\nMeski hatiku rindu dipeluk olehmu',
+  'Babak-Terakhir.mp3':'Jika ini memang babak terakhir kita\nBiarlah kenangan manis yang tersisa\nTerima kasih pernah singgah sebentar\nMengajarkanku arti ikhlas dan sabar',
+  'Ekspektasi.mp3':'Tak semua yang kita harapkan\nBerjalan sesuai dengan rencana\nEkspektasi sering kali melukai\nNamun hati belajar menerima lagi',
+  'Perih.mp3':'Tak seharusnya aku begini\nMenahan perih di dalam hati\nBila memang kau bukan milikku\nBiarlah waktu menyembuhkan rindu',
+  'Dera.mp3':'Dera hujan mengingatkan namamu\nJatuh perlahan di sudut jendelaku\nAda cerita yang belum usai\nNamun kita memilih untuk melambai',
+  'Esa-x-Perih.mp3':'Dalam sunyi nada mengalun pelan\nMengulang kisah yang sempat tertahan\nPerih yang dulu kini menjadi tenang\nSeiring malam yang perlahan pulang',
+  'Terjebak-Imajinasi.mp3':'Karena tak semua dalam ekspektasi\nAku datang dengan ratusan trauma\nTerjebak dalam imajinasi sendiri\nMencari arah pulang di dalam sepi',
+  'Tak-Lagi-Sama.mp3':'Kini rasa ini tak lagi sama\nAda jarak di antara dua kata\nKita pernah saling menggenggam erat\nSebelum waktu mengubah arah minat',
+  'Jakarta-Hari-Ini.mp3':'Jakarta hari ini kembali hujan\nMembasahi jalan penuh kenangan\nDi sudut kota yang sama kita berpisah\nMenyisakan tanya tanpa arah',
+  'Sadrah.mp3':'Pada akhirnya aku memilih sadrah\nMelepasmu pergi tanpa amarah\nBila bahagiamu bukan di sisiku\nBiarlah doa yang menjagamu selalu',
+  'Serena.mp3':'Tenanglah wahai hati yang gelisah\nBadai panjang pasti akan berkesudah\nSeperti senja yang menyambut malam\nSemua luka akan pulih perlahan',
+  'Penyangkalan.mp3':'Awalnya aku selalu menyangkal\nBahwa kisah kita telah usai kekal\nKini ku belajar menerima kenyataan\nMelepasmu dari segala ingatan',
+  'Tangguh.mp3':'Jatuh berkali-kali bukan berarti kalah\nBangkit kembali walau langkah terasa lelah\nHati yang tangguh ditempa oleh waktu\nUntuk menyambut hari esok yang baru',
+  '80-km-h.mp3':'Melaju kencang membelah malam kota\nDelapan puluh kilometer penuh cerita\nAngin malam membawa pergi resah\nMenuju tempat hati merasa cerah',
+  'Sendiri.mp3':'Kini ku terbiasa berjalan sendiri\nMenikmati sepi tanpa harus bersedih\nTernyata damai bisa kutemukan\nSaat berhenti memaksakan keadaan',
+  'Tak-Mengalah.mp3':'Meski badai datang silih berganti\nLangkah ini takkan pernah berhenti\nHati yang yakin tak mudah mengalah\nSampai harapan berbuah indah',
+  'Amnesia.mp3':'Ingin rasanya aku amnesia\nMelupakan semua tentang kita berdua\nNamun bayangmu selalu hadir kembali\nDi setiap sudut malam yang sunyi',
+  'Pergilah-Kekasih.mp3':'Pergilah kekasih kejarlah keinginanmu\nSelagi masih ada waktu untukmu\nJangan tangisi kepergian ini\nBiarlah aku sendiri di sini',
+  'Jadi-Yang-Kuinginkan.mp3':'Ku ingin kau jadi yang kuinginkan\nSelalu ada di setiap perjalanan\nGenggam tanganku jangan kau lepaskan\nBersama kita wujudkan impian',
+  'Bersamamu.mp3':'Memandangmu ku merasa tenang\nSemua gelisah perlahan menghilang\nBersamamu waktu terasa singkat\nKarena cintamu begitu hangat',
+  'Pangeran-Cinta.mp3':'Akulah sang pangeran cinta\nYang datang membawa cahaya\nTakkan kubiarkan hatimu terluka\nSelamanya kita bersama',
+  'Satu.mp3':'Aku ini adalah dirimu\nCinta ini adalah cintamu\nKita adalah satu jiwa\nYang takkan terpisah oleh masa',
+  'Mistikus-Cinta.mp3':'Cinta ini begitu dalam terasa\nMenembus batas ruang dan masa\nSeperti mantra yang mengikat jiwa\nTakkan pudar ditelan dunia',
+  'Separuh-Napas.mp3':'Separuh nafasku terbang bersama dirimu\nSaat kau tinggalkanku sendiri di sini\nKembalilah kasih peluk erat jiwaku\nJangan biarkan ku rapuh tanpamu',
+  'Cinta-Gila.mp3':'Cinta ini memang terasa gila\nMembuatku lupa akan segalanya\nHanya namamu yang ada di kepala\nSetiap detik sepanjang masa',
+  'Aku-Milikmu.mp3':'Terdengar lirih bisikanmu\nDi antara bayang-bayang waktu\nSelamanya aku milikmu\nTakkan berpaling dari hatimu',
+  'Sephia.mp3':'Selamat tidur kekasih gelapku\nSemoga cepat kau lupakan aku\nKekasih sejatimu takkan pernah sanggup\nUntuk melupakanmu',
+  'Bila-Kau-Tak-Disampingku.mp3':'Bila kau tak di sampingku\nTak tahu arah langkahku\nHanya kaulah pelita hidupku\nYang menerangi gelap malamku',
+  'Kita.mp3':'Di saat kita bersama\nDi waktu kita tertawa\nMenangis merenung oleh cinta\nKau coba hapuskan rasa',
+  'Pemuja-Rahasia.mp3':'Ku awali hariku dengan mendoakanmu\nAgar kau selalu sehat dan bahagia di situ\nKarena aku hanyalah pemuja rahasiamu\nYang mencintaimu dari kejauhan waktu',
+  'Sebuah-Kisah-Klasik.mp3':'Sampai jumpa kawanku semoga kita selalu\nMenjadi sebuah kisah klasik untuk masa depan\nBersenang-senanglah karena hari ini\nAkan kita rindukan di hari nanti',
+  'Hujan.mp3':'Rinai hujan basahi aku\nTemani sepi yang mengendap\nKala aku mengingatmu\nDan semua saat manis itu',
+  'Serpihan-Hati.mp3':'Dimanakah dirimu berada\nHati ini rindu ingin jumpa\nKumpulkan kembali serpihan hati\nYang hancur sejak kau pergi',
+  'Baby-Doll.mp3':'Ku bukan boneka mainanmu\nYang bisa kau atur sesuka hatimu\nAku punya rasa dan punya jiwa\nYang ingin dicintai apa adanya',
+  'Selamanya.mp3':'Ku ingin bersamamu selamanya\nMenjaga cinta hingga akhir masa\nTakkan kubiarkan jarak memisahkan\nDua hati yang telah dipersatukan',
+  'Hitamku.mp3':'Kini kau telah pergi tinggalkanku\nMenyisakan hitam di dalam hidupku\nNamun bayangmu tetap abadi\nTersimpan rapi di relung hati',
+  'Main-Hati.mp3':'Jangan pernah kau main hati\nBila tak sungguh mencintai\nKarena hati bukan tempat singgah\nUntuk ditinggalkan begitu saja',
+  'Masa-Ini-Nanti-dan-Indah-Lainnya.mp3':'Nikmati masa ini dan nanti\nSegala indah yang kan menghampiri\nSelama kita saling menggenggam\nSemua mimpi pasti kan terwujud nyata',
+  'Kembali-Kecil.mp3':'Ingin rasanya kembali kecil\nTanpa beban yang terasa mustahil\nTertawa lepas tanpa rasa takut\nSebelum dewasa datang menjemput',
+  'Mengenal-Lebih-Jauh.mp3':'Beri aku waktu mengenal lebih jauh\nTentang hatimu yang selama ini teduh\nTak perlu terburu mengejar arah\nBiarlah rasa tumbuh perlahan indah',
+  'Sampai-Kita-Tua.mp3':'Menua bersamamu adalah impian\nMelewati segala musim kehidupan\nDari rambut hitam hingga memutih\nCintaku padamu takkan beralih',
+  'Sang-Ratu.mp3':'Kaulah sang ratu di dalam hatiku\nYang bertahta indah di setiap waktuku\nTak ada yang mampu menggantikanmu\nSelamanya kaulah pilihanku',
+  'Id-Like-to-Watch-You-Sleeping.mp3':'In the quiet of the night so deep\nI love to watch you peacefully sleep\nEvery breath a gentle melody\nKeeping your heart close to me',
+  'Kita-Usahakan-Rumah-Itu.mp3':'Kita usahakan rumah itu\nDari depan akan tampak sederhana\nTapi kebunnya luas tanamannya mewah\nMegah tempat kita bercerita',
+  'Ocean-Eyes.mp3':'I\'ve been watchin\' you for some time\nCan\'t stop starin\' at those ocean eyes\nBurning cities and napalm skies\nFifteen flares inside those ocean eyes',
+  'WILDFLOWER.mp3':'Things fall apart and time breaks your heart\nI wasn\'t there but I know she was your girl\nYou showed her the world\nNow I can\'t help but wonder if I crossed the line',
+  'BIRDS-OF-A-FEATHER.mp3':'Birds of a feather we should stick together\nI know I said I\'d never think I wasn\'t better alone\nCan\'t change the weather might not be forever\nBut if it\'s forever it\'s even better',
+  'Evakuasi.mp3':'Perjalanan ini terasa sangat menyedihkan\nSayang engkau tak duduk di sampingku kawan\nBanyak cerita yang mestinya kau saksikan\nDi tanah kering bebatuan',
+  'Wejangan-Mama.mp3':'Jangan lupa makan dan jaga kesehatan\nPulang ke rumah kalau sudah kelelahan\nDunia di luar sana memang tak selalu ramah\nTapi doa mama selalu menyertai setiap langkah',
+  'Besok-Mungkin-Kita-Sampai.mp3':'Besok mungkin kita sampai\nDi tempat semua penat perlahan usai\nTetap melangkah walau hari terasa berat\nSemua proses ini pasti berbuah tepat',
+  'Jam-Makan-Siang.mp3':'Mari rehat sejenak di jam makan siang\nMelepas penat dari kejaran target yang panjang\nTarik napas pelan sebelum kembali berjuang\nHidup bukan cuma soal menang atau pulang',
+  'Dehidrasi.mp3':'Terlalu banyak berlari mengejar validasi\nSampai lupa memberi ruang bagi diri sendiri\nIstirahat sejenak sebelum kehabisan energi\nTenangkan pikiran dari bisingnya hari',
+  'Untuk-Apa.mp3':'Untuk apa semua yang kita kejar selama ini\nBila akhirnya hanya menyisakan sepi\nMenang banyak hal namun kehilangan arah\nMari duduk sebentar dan bertanya untuk apa'
 
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initApp);
-      } else {
-        initApp();
-      }
-    })();
-  </script>
+};
+  const stats=Object.assign({daily:{},tracks:{},artists:{}},JSON.parse(localStorage.getItem('nolStats_v1')||'{}'));
+const dayKey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function saveStats(){try{localStorage.setItem('nolStats_v1',JSON.stringify(stats));}catch(e){}}
+function fmtDur(sec){sec=Math.floor(sec||0);if(sec<60)return sec+' dtk';const m=Math.floor(sec/60),h=Math.floor(m/60);return h?h+'j '+(m%60)+'m':m+' mnt';}
+function recordPlayStart(idx){
+  if(countedIdx===idx)return;countedIdx=idx;
+  const tr=tracks[idx],src=tr.dataset.src,art=getArtist(tr);
+  if(!stats.tracks[src])stats.tracks[src]={plays:0,sec:0};
+  if(!stats.artists[art])stats.artists[art]={plays:0,sec:0};
+  stats.tracks[src].plays++;stats.artists[art].plays++;saveStats();
+}
+let statTick=0;
+setInterval(()=>{
+  if(!playing||(audio.paused&&!synthMode))return;
+  const k=dayKey(),tr=tracks[curIdx],src=tr.dataset.src,art=getArtist(tr);
+  stats.daily[k]=(stats.daily[k]||0)+1;
+  if(!stats.tracks[src])stats.tracks[src]={plays:1,sec:0};
+  if(!stats.artists[art])stats.artists[art]={plays:1,sec:0};
+  stats.tracks[src].sec++;stats.artists[art].sec++;
+  if(++statTick%5===0)saveStats();
+  if(document.getElementById('setModal').classList.contains('open'))document.getElementById('stToday').textContent=fmtDur(stats.daily[k]);
+},1000);
+addEventListener('visibilitychange',()=>{if(document.hidden){saveStats();saveLastState();}});
+function updateQueueUI(){
+  const b=document.getElementById('qBadge');b.textContent=playQueue.length;b.classList.toggle('show',playQueue.length>0);
+  const box=document.getElementById('qList');
+  box.innerHTML=playQueue.length?playQueue.map((tIdx,pos)=>{
+    const tr=tracks[tIdx];
+    return `<div class="rank-item" data-qpos="${pos}"><span class="rank-num">${pos+1}</span><img src="${tr.querySelector('img').src}" alt=""><div class="rank-info"><b>${tr.dataset.t}</b><small>${getArtist(tr)}</small></div><button type="button" class="qadd" data-del="${pos}" title="Hapus"><i class="ri-close-line"></i></button></div>`;
+  }).join(''):'<p style="font-size:.82rem;color:var(--muted)">Antrean kosong. Ketuk ikon <i class="ri-play-list-add-line"></i> di samping lagu untuk menambahkan.</p>';
+  box.querySelectorAll('.rank-item').forEach(el=>el.onclick=e=>{
+    const del=e.target.closest('[data-del]');
+    if(del){e.stopPropagation();playQueue.splice(+del.dataset.del,1);updateQueueUI();return;}
+    const idx=playQueue.splice(+el.dataset.qpos,1)[0];updateQueueUI();document.getElementById('qModal').classList.remove('open');loadTrack(idx,true);
+  });
+  }
+  function renderSettings(){
+  const today=dayKey(),todaySec=stats.daily[today]||0;
+  const totalSec=Object.values(stats.daily).reduce((a,b)=>a+b,0);
+  const totalPlays=Object.values(stats.tracks).reduce((a,b)=>a+(b.plays||0),0);
+  document.getElementById('stToday').textContent=fmtDur(todaySec);
+  document.getElementById('stTotal').textContent=fmtDur(totalSec);
+  document.getElementById('stPlays').textContent=totalPlays+'x';
+  const days=['Min','Sen','Sel','Rab','Kam','Jum','Sab'],cols=[];let maxS=60;
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=dayKey(d),s=stats.daily[k]||0;if(s>maxS)maxS=s;cols.push({day:i===0?'Hr Ini':days[d.getDay()],sec:s});}
+  document.getElementById('stWeek').innerHTML=cols.map(c=>`<div class="wk-col"><span class="wk-val">${Math.round(c.sec/60)}m</span><div class="wk-fill" style="height:${Math.max(8,Math.round((c.sec/maxS)*44))}px"></div><span class="wk-day">${c.day}</span></div>`).join('');
+  const topT=Object.entries(stats.tracks).filter(([,v])=>v.plays>0).sort((a,b)=>b[1].plays-a[1].plays||b[1].sec-a[1].sec).slice(0,5);
+  document.getElementById('topTracks').innerHTML=topT.length?topT.map(([src,v],i)=>{
+    const tIdx=tracks.findIndex(x=>x.dataset.src===src),tr=tracks[tIdx];if(!tr)return '';
+    return `<div class="rank-item" data-idx="${tIdx}"><span class="rank-num">#${i+1}</span><img src="${tr.querySelector('img').src}" alt=""><div class="rank-info"><b>${tr.dataset.t}</b><small>${getArtist(tr)} · ${fmtDur(v.sec)}</small></div><span class="rank-badge">${v.plays}x</span></div>`;
+  }).join(''):'<p style="font-size:.8rem;color:var(--muted)">Belum ada riwayat lagu diputar.</p>';
+  document.querySelectorAll('#topTracks .rank-item').forEach(el=>el.onclick=()=>{document.getElementById('setModal').classList.remove('open');loadTrack(+el.dataset.idx,true);});
+  const topA=Object.entries(stats.artists).filter(([,v])=>v.plays>0).sort((a,b)=>b[1].plays-a[1].plays||b[1].sec-a[1].sec).slice(0,5);
+  document.getElementById('topArtists').innerHTML=topA.length?topA.map(([art,v],i)=>`<div class="rank-item" style="cursor:default"><span class="rank-num">#${i+1}</span><div class="rank-info"><b>${art}</b><small>Didengarkan ${fmtDur(v.sec)}</small></div><span class="rank-badge">${v.plays}x</span></div>`).join(''):'<p style="font-size:.8rem;color:var(--muted)">Belum ada data artis.</p>';
+}
+function initSynth(){if(AC)return;AC=new (window.AudioContext||window.webkitAudioContext)();analyser=AC.createAnalyser();analyser.fftSize=128;data=new Uint8Array(analyser.frequencyBinCount);const m=AC.createGain();m.gain.value=.3;m.connect(analyser);analyser.connect(AC.destination);AC._m=m;}
+function playNote(t,f){const o=AC.createOscillator(),g=AC.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.22,t);g.gain.exponentialRampToValueAtTime(.001,t+.65);o.connect(g);g.connect(AC._m);o.start(t);o.stop(t+.65);}
+function playKick(t){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(38,t+.16);g.gain.setValueAtTime(.7,t);g.gain.exponentialRampToValueAtTime(.001,t+.28);o.connect(g);g.connect(AC._m);o.start(t);o.stop(t+.28);}
+const chords=[[261.6,329.6,392,493.9],[220,261.6,329.6,392],[174.6,220,261.6,349.2],[196,246.9,293.7,392]];
+function schedule(){const t=AC.currentTime+.05;if(step%4===0)playKick(t);const ch=chords[Math.floor(step/8)%chords.length];playNote(t,ch[(step+curIdx)%ch.length]);step++;}
+function startSynth(){initSynth();if(AC.state==='suspended')AC.resume();synthMode=true;setUIPlaying(true);recordPlayStart(curIdx);document.getElementById('nowSub').textContent='Ketuk ikon folder di lagu untuk MP3';clearInterval(timer);timer=setInterval(schedule,60000/bpm/2);}
+function setUIPlaying(state){
+  playing=state;document.body.classList.toggle('playing',state);
+  const ic=state?'ri-pause-fill':'ri-play-fill';['#play i','#mPlay i','#fsPlay i'].forEach(s=>document.querySelector(s).className=ic);
+  if('mediaSession' in navigator)navigator.mediaSession.playbackState=state?'playing':'paused';
+}
+function cycleSpeed(){
+  const rates=[1,0.85,1.15];speedIdx=(speedIdx+1)%rates.length;const r=rates[speedIdx];
+  audio.preservesPitch=audio.mozPreservesPitch=audio.webkitPreservesPitch=false;audio.playbackRate=r;
+  document.getElementById('spdTxt').textContent=r+'x';document.getElementById('spd').classList.toggle('on',speedIdx!==0);
+  document.querySelector('.vinyl').style.animationDuration=(2.4/r)+'s';
+  showToast(r===1?'Kecepatan Normal (1x)':r<1?'Mode Slowed (0.85x)':'Mode Sped Up (1.15x)');
+}
+const lyrCache=JSON.parse(localStorage.getItem('nolLyrics3')||'{}');
+function setLyrMsg(msg){['lBody','fsBody'].forEach(id=>{const b=document.getElementById(id);b.scrollTop=0;b.textContent=msg;});document.getElementById('liveLine').textContent='';}
+function renderLyrics(data){
+  syncedLines=[];lastActLine=-1;plainMode=false;
+  if(data&&data.synced){
+    data.synced.split('\n').forEach(ln=>{const m=ln.trim().match(/^\[(\d+):(\d+(?:\.\d+)?)\]\s*(.*)$/);if(m&&m[3].trim())syncedLines.push({t:+m[1]*60+ +m[2],txt:m[3].trim()});});
+    if(syncedLines.length){
+      const html=syncedLines.map(x=>`<div class="lyr-line" data-t="${x.t}">${x.txt.replace(/</g,'&lt;')}</div>`).join('');
+      document.getElementById('liveLine').textContent=syncedLines[0].txt;
+      ['lBody','fsBody'].forEach(id=>{const box=document.getElementById(id);box.scrollTop=0;box.innerHTML=html;box.querySelectorAll('.lyr-line').forEach(el=>el.onclick=()=>{if(isFinite(audio.duration)){audio.currentTime=+el.dataset.t;syncLyricsTime(true);}});});
+      syncLyricsTime(true);return;
+    }
+  }
+  const plain=(data&&data.plain)||'';
+  if(!plain){setLyrMsg('Lirik belum tersedia.');return;}
+  plainMode=true;syncedLines=plain.split('\n').map(s=>s.trim()).filter(Boolean).map(txt=>({t:-1,txt}));
+  const html=syncedLines.map((x,i)=>`<div class="lyr-line" data-i="${i}">${x.txt.replace(/</g,'&lt;')}</div>`).join('');
+  ['lBody','fsBody'].forEach(id=>{const box=document.getElementById(id);box.scrollTop=0;box.innerHTML=html;box.querySelectorAll('.lyr-line').forEach(el=>el.onclick=()=>{if(isFinite(audio.duration)){audio.currentTime=(+el.dataset.i/syncedLines.length)*audio.duration;syncLyricsTime(true);}});});
+  syncLyricsTime(true);
+}
+async function autoLoadLyrics(idx){
+  const tr=tracks[idx],key=tr.dataset.src,art=getArtist(tr),off=OFFLINE_LYRICS[key]||'';
+  document.getElementById('lEditBox').style.display='none';document.getElementById('lBody').style.display='block';
+  if(lyrCache[key]){renderLyrics(lyrCache[key]);return;}
+  if(off)renderLyrics({synced:'',plain:off});else setLyrMsg('Memuat lirik '+tr.dataset.t+'...');
+  try{
+    let r=await fetch(`https://lrclib.net/api/get?track_name=${encodeURIComponent(tr.dataset.t)}&artist_name=${encodeURIComponent(art)}`);
+    let j=r.ok?await r.json():null;
+    if(!j||!j.syncedLyrics){const s=await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(tr.dataset.t+' '+art)}`);const arr=s.ok?await s.json():[];const hit=arr.find(x=>x.syncedLyrics)||arr[0];if(hit)j=hit;}
+    if(j&&(j.syncedLyrics||j.plainLyrics)){lyrCache[key]={synced:j.syncedLyrics||'',plain:j.plainLyrics||off};try{localStorage.setItem('nolLyrics3',JSON.stringify(lyrCache));}catch(e){}if(idx===curIdx)renderLyrics(lyrCache[key]);}
+  }catch(e){}
+}
+function loadTrack(idx,autoPlay=true){
+  curIdx=(idx+tracks.length)%tracks.length;countedIdx=-1;const tr=tracks[curIdx],art=tr.querySelector('img').src;
+  tracks.forEach(x=>x.classList.toggle('on',x===tr));bpm=+tr.dataset.bpm||85;seek.value=fsSeek.value=0;curTimeEl.textContent=fsCurEl.textContent='0:00';durTimeEl.textContent=fsDurEl.textContent='0:00';paintSeek();
+  document.getElementById('nowTitle').textContent=document.getElementById('mTitle').textContent=document.getElementById('fsTitle').textContent=tr.dataset.t;
+  document.getElementById('nowSub').textContent=getArtist(tr)+' · '+bpm+' BPM';document.getElementById('mSub').textContent=document.getElementById('fsSub').textContent=getArtist(tr);
+  document.getElementById('pArt').src=document.getElementById('mImg').src=art;document.querySelector('.label').style.backgroundImage=`url('${art}')`;
+  applyCoverTheme(art,curIdx);updateMediaSession();autoLoadLyrics(curIdx);if(autoPlay){resumeTime=0;play();}
+}
+function nextTrack(){
+  if(playQueue.length){const nxt=playQueue.shift();updateQueueUI();loadTrack(nxt,true);return;}
+  if(shuffle&&tracks.length>1){let r;do{r=Math.floor(Math.random()*tracks.length);}while(r===curIdx);loadTrack(r,true);}else loadTrack(curIdx+1,true);
+}
+function tryPlaySources(list,i=0,isBundled=false){
+  if(i>=list.length){startSynth();if(location.protocol==='content:')document.getElementById('nowSub').textContent='Buka lewat Folder di Acode / APK untuk MP3';return;}
+  audio.src=list[i];
+  audio.play().then(()=>{if(isBundled)document.body.classList.add('bundled');setUIPlaying(true);recordPlayStart(curIdx);document.getElementById('nowSub').textContent=getArtist(tracks[curIdx])+' · '+bpm+' BPM';updateMediaSession();saveLastState();}).catch(()=>tryPlaySources(list,i+1,isBundled));
+}
+function play(){
+  clearInterval(timer);synthMode=false;audio.volume=1;const tr=tracks[curIdx];
+  if(tr.dataset.blob){if(audio.src===tr.dataset.blob&&audio.currentTime>0&&!audio.ended){audio.play().then(()=>{setUIPlaying(true);recordPlayStart(curIdx);});return;}tryPlaySources([tr.dataset.blob],0,false);return;}
+  if(audio.currentTime>0&&audio.getAttribute('data-idx')===String(curIdx)&&!audio.ended){audio.play().then(()=>{setUIPlaying(true);recordPlayStart(curIdx);}).catch(()=>startSynth());return;}
+  audio.setAttribute('data-idx',String(curIdx));const raw=tr.dataset.src;tryPlaySources([...new Set(['./'+raw,raw,raw.toLowerCase(),raw.replace(/-/g,' ')])],0,true);
+}
+function stop(){clearInterval(timer);audio.pause();audio.volume=1;synthMode=false;setUIPlaying(false);saveLastState();saveStats();}
+let cardSel=[],cardMode=0;
+function drawLyricCard(){
+  const c=document.getElementById('cardCanvas'),g=c.getContext('2d'),tr=tracks[curIdx];
+  const styles=[['#7a2617','#1d0805','#c6ff3d'],['#110921','#261447','#c6ff3d'],['#c6ff3d','#84cc16','#111111']];
+  const st=styles[cardMode%styles.length],isLight=cardMode%styles.length===2,fg=isLight?'#111111':'#ffffff',sub=isLight?'rgba(17,17,17,.72)':'rgba(255,255,255,.72)';
+  const gr=g.createLinearGradient(0,0,600,760);gr.addColorStop(0,st[0]);gr.addColorStop(1,st[1]);g.fillStyle=gr;g.fillRect(0,0,600,760);
+  g.fillStyle=isLight?'rgba(0,0,0,.06)':'rgba(255,255,255,.06)';g.beginPath();g.roundRect(36,36,528,688,36);g.fill();
+  g.fillStyle=fg;g.font='bold 28px Inter,sans-serif';g.fillText(tr.dataset.t.slice(0,26),68,106);
+  g.fillStyle=sub;g.font='600 20px Inter,sans-serif';g.fillText(getArtist(tr),68,138);
+  const chosen=cardSel.length?cardSel.map(i=>syncedLines[i]?.txt).filter(Boolean):[tr.dataset.t];
+  g.fillStyle=fg;g.font='bold 33px Inter,sans-serif';
+  let y=225;
+  chosen.forEach(line=>{
+    const words=line.split(' ');let cur='';
+    words.forEach(w=>{const test=cur?cur+' '+w:w;if(g.measureText(test).width>460){g.fillText(cur,68,y);y+=44;cur=w;}else cur=test;});
+    if(cur){g.fillText(cur,68,y);y+=56;}
+  });
+  g.fillStyle=st[2];g.font='900 24px Unbounded,sans-serif';g.fillText('NolMusic',68,682);
+  g.fillStyle=sub;g.font='500 16px Inter,sans-serif';g.fillText('A Nolson Music Experience',236,681);
+  }
+  function openLyricCard(){
+  if(!syncedLines.length){showToast('Belum ada lirik untuk dibagikan');return;}
+  const start=Math.max(0,lastActLine>=0?lastActLine:0);
+  cardSel=[start,start+1,start+2].filter(i=>i<syncedLines.length);
+  const box=document.getElementById('cardLines');
+  box.innerHTML=syncedLines.map((x,i)=>`<div class="c-pick-ln${cardSel.includes(i)?' sel':''}" data-i="${i}">${x.txt.replace(/</g,'&lt;')}</div>`).join('');
+  box.querySelectorAll('.c-pick-ln').forEach(el=>el.onclick=()=>{
+    const idx=+el.dataset.i;
+    if(cardSel.includes(idx)){if(cardSel.length>1)cardSel=cardSel.filter(x=>x!==idx);}
+    else{if(cardSel.length>=4)cardSel.shift();cardSel.push(idx);cardSel.sort((a,b)=>a-b);}
+    box.querySelectorAll('.c-pick-ln').forEach(x=>x.classList.toggle('sel',cardSel.includes(+x.dataset.i)));
+    drawLyricCard();
+  });
+  drawLyricCard();document.getElementById('cardModal').classList.add('open');
+}
+loadOfficialCovers();loadTrack(curIdx,false);
+document.getElementById('play').onclick=document.getElementById('mPlay').onclick=document.getElementById('fsPlay').onclick=()=>playing?stop():play();
+document.getElementById('prev').onclick=()=>loadTrack(curIdx-1,true);
+document.getElementById('next').onclick=document.getElementById('mNext').onclick=()=>nextTrack();
+let mSwiped=false,mSx=0,mSy=0;const miniEl=document.getElementById('mini');
+miniEl.addEventListener('touchstart',e=>{mSwiped=false;mSx=e.touches[0].clientX;mSy=e.touches[0].clientY;},{passive:true});
+miniEl.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-mSx,dy=e.changedTouches[0].clientY-mSy;if(Math.abs(dx)>52&&Math.abs(dx)>Math.abs(dy)*1.4){mSwiped=true;if(dx<0){nextTrack();showToast('Lagu berikutnya');}else{loadTrack(curIdx-1,true);showToast('Lagu sebelumnya');}}},{passive:true});
+document.getElementById('mJump').onclick=()=>{if(!mSwiped)document.getElementById('mainPlayer').scrollIntoView({behavior:'smooth',block:'center'});};
+document.getElementById('spd').onclick=cycleSpeed;
+document.getElementById('lShareBtn').onclick=openLyricCard;
+document.getElementById('cardClose').onclick=()=>document.getElementById('cardModal').classList.remove('open');
+document.getElementById('cardStyle').onclick=()=>{cardMode++;drawLyricCard();};
+document.getElementById('cardSave').onclick=()=>{const a=document.createElement('a');a.download='NolMusic-'+tracks[curIdx].dataset.t+'.png';a.href=document.getElementById('cardCanvas').toDataURL('image/png');a.click();showToast('Kartu lirik disimpan');};
+document.getElementById('cardShare').onclick=()=>{
+  document.getElementById('cardCanvas').toBlob(async blob=>{
+    const file=new File([blob],'NolMusic-Lirik.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:tracks[curIdx].dataset.t});return;}catch(e){}}
+    document.getElementById('cardSave').click();
+  },'image/png');
+};
+  document.getElementById('queueOpenBtn').onclick=()=>{updateQueueUI();document.getElementById('qModal').classList.add('open');};
+document.getElementById('qClose').onclick=()=>document.getElementById('qModal').classList.remove('open');
+document.getElementById('qClear').onclick=()=>{playQueue=[];updateQueueUI();showToast('Antrean dikosongkan');};
+document.getElementById('lExpBtn').onclick=()=>document.getElementById('fsLyr').classList.add('open');
+document.getElementById('fsClose').onclick=()=>document.getElementById('fsLyr').classList.remove('open');
+document.getElementById('setBtn').onclick=()=>{renderSettings();document.getElementById('setModal').classList.add('open');};
+document.getElementById('setClose').onclick=()=>document.getElementById('setModal').classList.remove('open');
+['setModal','qModal','cardModal'].forEach(id=>document.getElementById(id).onclick=e=>{if(e.target.id===id)e.currentTarget.classList.remove('open');});
+document.getElementById('optViz').onclick=()=>{prefs.viz=!prefs.viz;savePrefs();applyPrefs();};
+document.getElementById('optVinyl').onclick=()=>{prefs.vinyl=!prefs.vinyl;savePrefs();applyPrefs();};
+document.getElementById('optResume').onclick=()=>{prefs.resume=!prefs.resume;if(!prefs.resume)localStorage.removeItem('nolLast');savePrefs();applyPrefs();};
+function resetLyricsCache(){['nolLyrics','nolLyrics2','nolLyrics3'].forEach(k=>localStorage.removeItem(k));for(const k in lyrCache)delete lyrCache[k];autoLoadLyrics(curIdx);showToast('Cache lirik direset');}
+document.getElementById('lResetBtn').onclick=document.getElementById('btnResetLyr').onclick=resetLyricsCache;
+let resetConfirm=0;
+document.getElementById('btnResetStats').onclick=function(){
+  if(Date.now()-resetConfirm>3000){resetConfirm=Date.now();showToast('Ketuk sekali lagi untuk hapus statistik');return;}
+  stats.daily={};stats.tracks={};stats.artists={};countedIdx=-1;saveStats();renderSettings();showToast('Statistik pemutaran direset');
+};
+  document.getElementById('shuf').onclick=function(){shuffle=!shuffle;this.classList.toggle('on',shuffle);};
+document.getElementById('rep').onclick=function(){repMode=repMode==='all'?'one':repMode==='one'?'off':'all';this.classList.toggle('on',repMode!=='off');this.querySelector('i').className=repMode==='one'?'ri-repeat-one-line':'ri-repeat-line';};
+document.getElementById('sleep').onclick=function(){const steps=[0,15,30,60];sleepMins=steps[(steps.indexOf(sleepMins)+1)%steps.length];sleepEnd=sleepMins?Date.now()+sleepMins*60000:0;this.classList.toggle('on',sleepMins>0);document.getElementById('sleepTxt').textContent=sleepMins?sleepMins+'m':'';};
+setInterval(()=>{if(!sleepEnd)return;const rem=sleepEnd-Date.now();if(rem<=0){sleepEnd=0;sleepMins=0;document.getElementById('sleep').classList.remove('on');document.getElementById('sleepTxt').textContent='';stop();}else{document.getElementById('sleepTxt').textContent=Math.ceil(rem/60000)+'m';if(rem<5000&&!audio.paused)audio.volume=Math.max(0.05,rem/5000);}},1000);
+document.getElementById('lEditBtn').onclick=()=>{const c=lyrCache[tracks[curIdx].dataset.src];document.getElementById('lInput').value=c?(c.plain||c.synced):(OFFLINE_LYRICS[tracks[curIdx].dataset.src]||'');document.getElementById('lBody').style.display='none';document.getElementById('lEditBox').style.display='flex';};
+document.getElementById('lCancelBtn').onclick=()=>{document.getElementById('lEditBox').style.display='none';document.getElementById('lBody').style.display='block';};
+document.getElementById('lSaveBtn').onclick=()=>{const txt=document.getElementById('lInput').value.trim(),key=tracks[curIdx].dataset.src;if(txt){lyrCache[key]={synced:'',plain:txt};try{localStorage.setItem('nolLyrics3',JSON.stringify(lyrCache));}catch(e){}renderLyrics(lyrCache[key]);showToast('Lirik tersimpan');}document.getElementById('lEditBox').style.display='none';document.getElementById('lBody').style.display='block';};
+const favs=new Set(JSON.parse(localStorage.getItem('nolFavs')||'[]'));
+const artistList=['all',...new Set(tracks.map(tr=>getArtist(tr)))];
+document.getElementById('artistChips').innerHTML=artistList.map(a=>`<button type="button" class="chip${a==='all'?' on':''}" data-art="${a.replace(/"/g,'&quot;')}">${a==='all'?'Semua Artis':a}</button>`).join('');
+document.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));ch.classList.add('on');artistFilter=ch.dataset.art;applyFilter();});
+function applyFilter(){const q=document.getElementById('search').value.toLowerCase().trim();let vis=0;tracks.forEach(tr=>{const ok=(filterMode==='all'||favs.has(tr.dataset.src))&&(artistFilter==='all'||getArtist(tr)===artistFilter)&&(!q||tr.dataset.t.toLowerCase().includes(q)||tr.textContent.toLowerCase().includes(q));tr.style.display=ok?'':'none';if(ok)vis++;});document.getElementById('noResult').style.display=vis?'none':'block';}
+document.getElementById('search').oninput=applyFilter;
+document.querySelectorAll('.ftab[data-f]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.ftab[data-f]').forEach(x=>x.classList.remove('on'));b.classList.add('on');filterMode=b.dataset.f;applyFilter();});
+document.getElementById('shufAllBtn').onclick=()=>{
+  const visIdx=tracks.map((tr,i)=>tr.style.display!=='none'?i:-1).filter(i=>i!==-1);
+  const pool=visIdx.length?visIdx:tracks.map((_,i)=>i);
+  shuffle=true;document.getElementById('shuf').classList.add('on');
+  const pick=pool[Math.floor(Math.random()*pool.length)];
+  loadTrack(pick,true);showToast('Memutar acak ('+pool.length+' lagu)');
+};
+const norm=s=>s.toLowerCase().replace(/\.[^.]+$/,'').replace(/[^a-z0-9]/g,'');
+tracks.forEach((tr,i)=>{
+  getArtist(tr);const qBtn=tr.querySelector('.qadd'),favBtn=tr.querySelector('.fav'),pickBtn=tr.querySelector('.pick'),fileInp=tr.querySelector('input[type="file"]');
+  qBtn.onclick=e=>{e.stopPropagation();playQueue.push(i);updateQueueUI();showToast('Antrean +1: '+tr.dataset.t);};
+  const syncFav=()=>{const on=favs.has(tr.dataset.src);favBtn.classList.toggle('on',on);favBtn.querySelector('i').className=on?'ri-heart-fill':'ri-heart-line';};
+  syncFav();favBtn.onclick=e=>{e.stopPropagation();favs.has(tr.dataset.src)?favs.delete(tr.dataset.src):favs.add(tr.dataset.src);localStorage.setItem('nolFavs',JSON.stringify([...favs]));syncFav();if(filterMode==='fav')applyFilter();};
+  pickBtn.onclick=e=>{e.stopPropagation();fileInp.click();};
+  fileInp.onchange=async()=>{
+    const files=[...fileInp.files];if(!files.length)return;let firstMatched=i;
+    for(const f of files){const fn=norm(f.name),matchIdx=files.length===1?i:tracks.findIndex(t=>norm(t.dataset.src)===fn||norm(t.dataset.t)===fn||fn.includes(norm(t.dataset.t))),tIdx=matchIdx!==-1?matchIdx:i,targetTr=tracks[tIdx];targetTr.dataset.blob=URL.createObjectURL(f);const sub=targetTr.querySelector('.sub');sub.textContent='✓ Dipilih: '+f.name;sub.style.color='var(--lime)';const id3=await extractID3Art(f);if(id3){targetTr.dataset.id3art='1';setCover(targetTr,id3,tIdx);}if(matchIdx===i)firstMatched=i;}
+    loadTrack(firstMatched,true);
+  };
+  tr.onclick=()=>{if(curIdx===i&&playing)stop();else loadTrack(i,true);};
+});
+audio.addEventListener('ended',()=>{countedIdx=-1;if(repMode==='one'){audio.currentTime=0;play();}else if(repMode==='off'&&!shuffle&&!playQueue.length&&curIdx===tracks.length-1){stop();}else nextTrack();});
+let tt=0;(function draw(){if(prefs.viz){ctx.clearRect(0,0,cv.width,cv.height);const n=64,w=cv.width/n;tt+=playing?(.03*(bpm/82)):.02;if(synthMode&&playing&&data)analyser.getByteFrequencyData(data);for(let i=0;i<n;i++){let v=synthMode&&playing&&data?(data[i%data.length]/255):(playing?(.22+.24*Math.abs(Math.sin(tt*2.4+i*.32))*Math.cos(tt+i*.15)):(.12+.08*Math.sin(tt+i*.35)));const h=Math.max(4,v*cv.height*.6);const g=ctx.createLinearGradient(0,cv.height,0,cv.height-h);g.addColorStop(0,'rgba(139,92,246,.7)');g.addColorStop(1,'rgba(198,255,61,.8)');ctx.fillStyle=g;ctx.fillRect(i*w+2,cv.height-h,w-4,h);}}if(!reduce)requestAnimationFrame(draw);})();
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const el=e.target;el.classList.add('in');io.unobserve(el);setTimeout(()=>{el.classList.remove('rv');el.style.transitionDelay='';},1100);}}),{threshold:.15});
+document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%3)*100+'ms';io.observe(el);});
+new IntersectionObserver(es=>document.getElementById('mini').classList.toggle('show',!es[0].isIntersecting),{threshold:.1}).observe(document.getElementById('mainPlayer'));
+</script>
 </body>
-</html>
+</html> 
